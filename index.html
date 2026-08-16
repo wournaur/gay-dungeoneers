@@ -6,7 +6,7 @@
 <script src="https://cdn.jsdelivr.net/npm/gridjs@5.0.2/dist/gridjs.umd.js" integrity="sha384-/XXDzxe4FsGiAe50i/u9pY/Vy/uX654MHB1xoc1BJNnH1WXHhqHga9g3q5tF4gj7" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/gridjs@5.0.2/dist/theme/mermaid.min.css" rel="stylesheet">
 <style>
-  :root { color-scheme: light; }
+  :root { color-scheme: dark; }
 
   * { box-sizing: border-box; }
 
@@ -14,19 +14,19 @@
     margin: 0;
     padding: 24px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: #faf9fc;
-    color: #2b2438;
+    background: #0a0910;
+    color: #e8e4f0;
   }
 
   h1 {
     font-size: 24px;
     margin: 0 0 4px 0;
-    color: #4a2f78;
+    color: #c9a8f5;
   }
 
   .subtitle {
     font-size: 13px;
-    color: #6b6478;
+    color: #9891a8;
     margin-bottom: 20px;
   }
 
@@ -34,7 +34,7 @@
     display: flex;
     gap: 4px;
     margin-bottom: 18px;
-    border-bottom: 2px solid #e4dff0;
+    border-bottom: 2px solid #262030;
   }
 
   .tab-btn {
@@ -43,18 +43,18 @@
     background: transparent;
     font-size: 14px;
     font-weight: 600;
-    color: #8a819a;
+    color: #9891a8;
     cursor: pointer;
     border-bottom: 2px solid transparent;
     margin-bottom: -2px;
     transition: color 0.15s;
   }
 
-  .tab-btn:hover { color: #4a2f78; }
+  .tab-btn:hover { color: #c9a8f5; }
 
   .tab-btn.active {
-    color: #4a2f78;
-    border-bottom-color: #7c4fd6;
+    color: #c9a8f5;
+    border-bottom-color: #9f6fef;
   }
 
   .panel { display: none; }
@@ -79,7 +79,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #8a819a;
+    color: #9891a8;
   }
 
   .chip-row {
@@ -91,11 +91,11 @@
   .chip {
     padding: 5px 12px;
     border-radius: 999px;
-    border: 1px solid #d9d2e8;
-    background: #fff;
+    border: 1px solid #3a3348;
+    background: #16131c;
     font-size: 12.5px;
     font-weight: 600;
-    color: #574c6b;
+    color: #c4bcd4;
     cursor: pointer;
     transition: all 0.12s;
     white-space: nowrap;
@@ -111,7 +111,7 @@
 
   .count-badge {
     font-size: 12px;
-    color: #8a819a;
+    color: #9891a8;
     margin-left: auto;
     align-self: center;
     padding-top: 14px;
@@ -129,68 +129,97 @@
     white-space: nowrap;
   }
 
-  .badge-common { background: #eef0f4; color: #55606e; }
-  .badge-rare { background: #dbeafe; color: #1d4ed8; }
-  .badge-legendary { background: #fdf2c8; color: #92650a; }
+  .badge-common { background: rgba(148,163,184,0.16); color: #cbd5e1; }
+  .badge-rare { background: rgba(59,130,246,0.2); color: #93c5fd; }
+  .badge-legendary { background: rgba(245,197,24,0.2); color: #fbbf24; }
 
-  .badge-cat-damage { background: #fde2e1; color: #b3261e; }
-  .badge-cat-tank { background: #dcecdd; color: #1e6b3a; }
-  .badge-cat-support { background: #e3e0fb; color: #4c3ba8; }
-  .badge-cat-general { background: #eef0f4; color: #55606e; }
-  .badge-cat-innate { background: #fde8c8; color: #8a4b0a; }
-  .badge-cat-damageperround { background: #fde2e1; color: #b3261e; }
-  .badge-cat-control { background: #ffe8cf; color: #b3600e; }
-  .badge-cat-defense { background: #dcecdd; color: #1e6b3a; }
-  .badge-cat-bonus { background: #e3e0fb; color: #4c3ba8; }
+  .badge-cat-damage { background: rgba(239,68,68,0.2); color: #fca5a5; }
+  .badge-cat-tank { background: rgba(34,197,94,0.2); color: #86efac; }
+  .badge-cat-support { background: rgba(139,92,246,0.22); color: #c4b5fd; }
+  .badge-cat-general { background: rgba(148,163,184,0.16); color: #cbd5e1; }
+  .badge-cat-innate { background: rgba(249,115,22,0.2); color: #fdba74; }
+  .badge-cat-damageperround { background: rgba(239,68,68,0.2); color: #fca5a5; }
+  .badge-cat-control { background: rgba(251,146,60,0.2); color: #fdba74; }
+  .badge-cat-defense { background: rgba(34,197,94,0.2); color: #86efac; }
+  .badge-cat-bonus { background: rgba(139,92,246,0.22); color: #c4b5fd; }
 
   .badge-archetype {
-    background: #eef4fb;
-    color: #2c5f8a;
+    background: rgba(56,189,248,0.18);
+    color: #7dd3fc;
     font-weight: 600;
     text-transform: none;
   }
 
-  .stack-note { font-size: 11.5px; color: #8a819a; margin-left: 4px; }
+  .stack-note { font-size: 11.5px; color: #9891a8; margin-left: 4px; }
 
   /* gridjs overrides */
-  .gridjs-wrapper { border-radius: 10px; border-color: #e4dff0 !important; }
-  .gridjs-table { font-size: 13px; }
+  .gridjs-wrapper { border-radius: 10px; border-color: #262030 !important; background: #121017 !important; }
+  .gridjs-table { font-size: 13px; background: #121017 !important; }
+  .gridjs-container { color: #e8e4f0 !important; }
+  .gridjs-head { background: transparent !important; }
   th.gridjs-th {
-    background: #f3effa !important;
-    color: #4a2f78 !important;
+    background: #1a1620 !important;
+    color: #c9a8f5 !important;
     font-weight: 700 !important;
     font-size: 12px !important;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    border-color: #2a2438 !important;
   }
-  td.gridjs-td { padding: 10px 12px !important; vertical-align: top; }
+  .gridjs-th-content { color: inherit !important; }
+  .gridjs-thead th.gridjs-th:hover { background: #221c2c !important; }
+  td.gridjs-td {
+    padding: 10px 12px !important;
+    vertical-align: top;
+    background: #121017 !important;
+    color: #e8e4f0 !important;
+    border-color: #201b28 !important;
+  }
+  tr.gridjs-tr:hover td.gridjs-td { background: #1c1826 !important; }
   .gridjs-search-input {
     border-radius: 8px !important;
-    border-color: #d9d2e8 !important;
+    border-color: #3a3348 !important;
+    background: #16131c !important;
+    color: #e8e4f0 !important;
     font-size: 13px !important;
   }
-  .gridjs-pagination .gridjs-pages button { border-radius: 6px !important; }
-  .gridjs-footer { border-color: #e4dff0 !important; }
+  .gridjs-search-input::placeholder { color: #746c88 !important; }
+  .gridjs-pagination { color: #c4bcd4 !important; }
+  .gridjs-pagination .gridjs-pages button {
+    border-radius: 6px !important;
+    background: #16131c !important;
+    color: #c4bcd4 !important;
+    border-color: #3a3348 !important;
+  }
+  .gridjs-pagination .gridjs-pages button:hover { background: #221c2c !important; }
+  .gridjs-pagination .gridjs-pages button:disabled { color: #4a4458 !important; }
+  .gridjs-pagination .gridjs-pages button.gridjs-currentPage {
+    background: #7c4fd6 !important;
+    color: #fff !important;
+    border-color: #7c4fd6 !important;
+  }
+  .gridjs-summary { color: #9891a8 !important; }
+  .gridjs-footer { border-color: #262030 !important; background: #121017 !important; }
 
   .sim-section {
     margin-top: 34px;
     padding-top: 24px;
-    border-top: 1px solid #e4dff0;
+    border-top: 1px solid #262030;
   }
   .sim-heading {
     font-size: 18px;
-    color: #4a2f78;
+    color: #c9a8f5;
     margin: 0 0 4px 0;
   }
   .sim-subtitle {
     font-size: 12.5px;
-    color: #8a819a;
+    color: #9891a8;
     margin-bottom: 14px;
   }
   .sim-subtitle code {
     font-family: Consolas, Menlo, monospace;
-    background: #f3effa;
-    color: #7c4fd6;
+    background: #1a1620;
+    color: #b794f6;
     padding: 1px 5px;
     border-radius: 4px;
     font-size: 11.5px;
@@ -204,15 +233,15 @@
   .sim-btn {
     padding: 8px 18px;
     border-radius: 8px;
-    border: 1px solid #d9d2e8;
-    background: #fff;
+    border: 1px solid #3a3348;
+    background: #16131c;
     font-size: 13px;
     font-weight: 700;
-    color: #4a2f78;
+    color: #c9a8f5;
     cursor: pointer;
     transition: all 0.12s;
   }
-  .sim-btn:hover { background: #f3effa; border-color: #a887e0; }
+  .sim-btn:hover { background: #221c2c; border-color: #a887e0; }
   .sim-btn:active { transform: translateY(1px); }
   .sim-btn-surprise {
     background: #7c4fd6;
@@ -222,40 +251,40 @@
   .sim-btn-surprise:hover { background: #6a3fc0; }
 
   .embed-card {
-    border: 1px solid #e4dff0;
+    border: 1px solid #262030;
     border-left: 4px solid #7c4fd6;
     border-radius: 8px;
-    background: #fff;
+    background: #121017;
     padding: 16px 18px;
     max-width: 640px;
   }
   .embed-title {
     font-size: 15px;
     font-weight: 700;
-    color: #2b2438;
+    color: #f0ecf9;
     margin: 0 0 8px 0;
   }
   .embed-desc {
     font-size: 13px;
-    color: #33293f;
+    color: #d8d2e4;
     line-height: 1.6;
     white-space: pre-line;
     margin-bottom: 14px;
   }
-  .embed-desc strong { color: #4a2f78; }
+  .embed-desc strong { color: #c9a8f5; }
   .embed-fields {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
   .embed-field {
-    border-top: 1px solid #f0ecf9;
+    border-top: 1px solid #201b28;
     padding-top: 10px;
   }
   .embed-field-name {
     font-size: 13px;
     font-weight: 700;
-    color: #2b2438;
+    color: #f0ecf9;
     margin-bottom: 3px;
     display: flex;
     align-items: center;
@@ -263,12 +292,12 @@
   }
   .embed-field-value {
     font-size: 12.5px;
-    color: #574c6b;
+    color: #a89cc4;
     line-height: 1.5;
   }
   .sim-placeholder {
     font-size: 13px;
-    color: #b0a8c0;
+    color: #6f6684;
     font-style: italic;
   }
 
@@ -277,18 +306,18 @@
   .rb-nav {
     position: sticky;
     top: 0;
-    background: #faf9fc;
+    background: #0a0910;
     z-index: 10;
     padding: 10px 0 12px 0;
     margin-bottom: 8px;
-    border-bottom: 1px solid #e4dff0;
+    border-bottom: 1px solid #262030;
   }
   .rb-nav-title {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #8a819a;
+    color: #9891a8;
     margin-bottom: 8px;
   }
   .rb-nav-links {
@@ -299,29 +328,29 @@
   .rb-nav-links a {
     font-size: 12px;
     font-weight: 600;
-    color: #574c6b;
+    color: #c4bcd4;
     text-decoration: none;
     padding: 4px 10px;
     border-radius: 999px;
-    background: #f3effa;
+    background: #16131c;
     white-space: nowrap;
   }
-  .rb-nav-links a:hover { background: #e3d9f7; color: #4a2f78; }
+  .rb-nav-links a:hover { background: #2a2438; color: #d8c4f5; }
 
   .rb-content h1 {
     font-size: 26px;
     margin: 18px 0 6px 0;
-    color: #2b2438;
+    color: #f0ecf9;
   }
   .rb-content h2 {
     font-size: 20px;
-    color: #4a2f78;
+    color: #c9a8f5;
     margin: 30px 0 10px 0;
     scroll-margin-top: 74px;
   }
   .rb-content h3 {
     font-size: 15.5px;
-    color: #5a3f8a;
+    color: #b794f6;
     margin: 20px 0 8px 0;
     scroll-margin-top: 74px;
   }
@@ -329,7 +358,7 @@
     font-size: 14px;
     line-height: 1.6;
     margin: 0 0 12px 0;
-    color: #33293f;
+    color: #d8d2e4;
   }
   .rb-content ul.rb-list {
     margin: 0 0 14px 0;
@@ -339,23 +368,23 @@
     font-size: 14px;
     line-height: 1.6;
     margin-bottom: 6px;
-    color: #33293f;
+    color: #d8d2e4;
   }
-  .rb-content strong { color: #2b2438; }
-  .rb-content em { color: #5a3f8a; }
+  .rb-content strong { color: #f0ecf9; }
+  .rb-content em { color: #b794f6; }
   .rb-content code {
     font-family: Consolas, Menlo, monospace;
-    background: #f3effa;
-    color: #7c4fd6;
+    background: #1a1620;
+    color: #b794f6;
     padding: 1px 5px;
     border-radius: 4px;
     font-size: 12.5px;
   }
-  .rb-content a { color: #7c4fd6; }
+  .rb-content a { color: #b794f6; }
   .rb-content a.rb-anchor-link { text-decoration: underline; }
   .rb-hr {
     border: none;
-    border-top: 1px solid #e4dff0;
+    border-top: 1px solid #262030;
     margin: 26px 0;
   }
   .rb-table {
@@ -364,15 +393,16 @@
     font-size: 13.5px;
   }
   .rb-table th, .rb-table td {
-    border: 1px solid #e4dff0;
+    border: 1px solid #262030;
     padding: 7px 14px;
     text-align: left;
   }
   .rb-table th {
-    background: #f3effa;
-    color: #4a2f78;
+    background: #1a1620;
+    color: #c9a8f5;
     font-weight: 700;
   }
+  .rb-table td { color: #d8d2e4; }
 
   .glossary-section-wrap { max-width: 880px; margin: 0 auto; }
 
@@ -540,7 +570,7 @@
 </div>
 
 <div class="glossary-section-wrap">
-<h2 id="11-glossary" style="scroll-margin-top:74px; font-size:20px; color:#4a2f78; margin:0 0 10px 0;">11. Glossary</h2>
+<h2 id="11-glossary" style="scroll-margin-top:74px; font-size:20px; color:#c9a8f5; margin:0 0 10px 0;">11. Glossary</h2>
 <div class="subtitle">Talents and status effects — sortable, filterable, always current with descriptions.json.</div>
 
 <div class="tabs">
