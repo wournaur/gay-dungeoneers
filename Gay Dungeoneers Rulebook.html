@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gay Dungeoneers — Glossary</title>
+<script src="https://cdn.jsdelivr.net/npm/gridjs@5.0.2/dist/gridjs.umd.js" integrity="sha384-/XXDzxe4FsGiAe50i/u9pY/Vy/uX654MHB1xoc1BJNnH1WXHhqHga9g3q5tF4gj7" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/gridjs@5.0.2/dist/theme/mermaid.min.css" rel="stylesheet">
+<style>
+  :root { color-scheme: light; }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #faf9fc;
+    color: #2b2438;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin: 0 0 4px 0;
+    color: #4a2f78;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #6b6478;
+    margin-bottom: 20px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+    border-bottom: 2px solid #e4dff0;
+  }
+
+  .tab-btn {
+    padding: 9px 18px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8a819a;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s;
+  }
+
+  .tab-btn:hover { color: #4a2f78; }
+
+  .tab-btn.active {
+    color: #4a2f78;
+    border-bottom-color: #7c4fd6;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #8a819a;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chip {
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid #d9d2e8;
+    background: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #574c6b;
+    cursor: pointer;
+    transition: all 0.12s;
+    white-space: nowrap;
+  }
+
+  .chip:hover { border-color: #a887e0; }
+
+  .chip.active {
+    background: #7c4fd6;
+    border-color: #7c4fd6;
+    color: #fff;
+  }
+
+  .count-badge {
+    font-size: 12px;
+    color: #8a819a;
+    margin-left: auto;
+    align-self: center;
+    padding-top: 14px;
+  }
+
+  .grid-wrap { font-size: 13.5px; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 5px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: capitalize;
+    white-space: nowrap;
+  }
+
+  .badge-common { background: #eef0f4; color: #55606e; }
+  .badge-rare { background: #dbeafe; color: #1d4ed8; }
+  .badge-legendary { background: #fdf2c8; color: #92650a; }
+
+  .badge-cat-damage { background: #fde2e1; color: #b3261e; }
+  .badge-cat-tank { background: #dcecdd; color: #1e6b3a; }
+  .badge-cat-support { background: #e3e0fb; color: #4c3ba8; }
+  .badge-cat-general { background: #eef0f4; color: #55606e; }
+  .badge-cat-innate { background: #fde8c8; color: #8a4b0a; }
+  .badge-cat-damageperround { background: #fde2e1; color: #b3261e; }
+  .badge-cat-control { background: #ffe8cf; color: #b3600e; }
+  .badge-cat-defense { background: #dcecdd; color: #1e6b3a; }
+  .badge-cat-bonus { background: #e3e0fb; color: #4c3ba8; }
+
+  .badge-archetype {
+    background: #eef4fb;
+    color: #2c5f8a;
+    font-weight: 600;
+    text-transform: none;
+  }
+
+  .stack-note { font-size: 11.5px; color: #8a819a; margin-left: 4px; }
+
+  /* gridjs overrides */
+  .gridjs-wrapper { border-radius: 10px; border-color: #e4dff0 !important; }
+  .gridjs-table { font-size: 13px; }
+  th.gridjs-th {
+    background: #f3effa !important;
+    color: #4a2f78 !important;
+    font-weight: 700 !important;
+    font-size: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  td.gridjs-td { padding: 10px 12px !important; vertical-align: top; }
+  .gridjs-search-input {
+    border-radius: 8px !important;
+    border-color: #d9d2e8 !important;
+    font-size: 13px !important;
+  }
+  .gridjs-pagination .gridjs-pages button { border-radius: 6px !important; }
+  .gridjs-footer { border-color: #e4dff0 !important; }
+
+  .sim-section {
+    margin-top: 34px;
+    padding-top: 24px;
+    border-top: 1px solid #e4dff0;
+  }
+  .sim-heading {
+    font-size: 18px;
+    color: #4a2f78;
+    margin: 0 0 4px 0;
+  }
+  .sim-subtitle {
+    font-size: 12.5px;
+    color: #8a819a;
+    margin-bottom: 14px;
+  }
+  .sim-subtitle code {
+    font-family: Consolas, Menlo, monospace;
+    background: #f3effa;
+    color: #7c4fd6;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 11.5px;
+  }
+  .sim-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .sim-btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid #d9d2e8;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    color: #4a2f78;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .sim-btn:hover { background: #f3effa; border-color: #a887e0; }
+  .sim-btn:active { transform: translateY(1px); }
+  .sim-btn-surprise {
+    background: #7c4fd6;
+    border-color: #7c4fd6;
+    color: #fff;
+  }
+  .sim-btn-surprise:hover { background: #6a3fc0; }
+
+  .embed-card {
+    border: 1px solid #e4dff0;
+    border-left: 4px solid #7c4fd6;
+    border-radius: 8px;
+    background: #fff;
+    padding: 16px 18px;
+    max-width: 640px;
+  }
+  .embed-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2b2438;
+    margin: 0 0 8px 0;
+  }
+  .embed-desc {
+    font-size: 13px;
+    color: #33293f;
+    line-height: 1.6;
+    white-space: pre-line;
+    margin-bottom: 14px;
+  }
+  .embed-desc strong { color: #4a2f78; }
+  .embed-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .embed-field {
+    border-top: 1px solid #f0ecf9;
+    padding-top: 10px;
+  }
+  .embed-field-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2b2438;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .embed-field-value {
+    font-size: 12.5px;
+    color: #574c6b;
+    line-height: 1.5;
+  }
+  .sim-placeholder {
+    font-size: 13px;
+    color: #b0a8c0;
+    font-style: italic;
+  }
+
+  .rb-wrap { max-width: 880px; margin: 0 auto 40px auto; }
+
+  .rb-nav {
+    position: sticky;
+    top: 0;
+    background: #faf9fc;
+    z-index: 10;
+    padding: 10px 0 12px 0;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #e4dff0;
+  }
+  .rb-nav-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #8a819a;
+    margin-bottom: 8px;
+  }
+  .rb-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+  }
+  .rb-nav-links a {
+    font-size: 12px;
+    font-weight: 600;
+    color: #574c6b;
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f3effa;
+    white-space: nowrap;
+  }
+  .rb-nav-links a:hover { background: #e3d9f7; color: #4a2f78; }
+
+  .rb-content h1 {
+    font-size: 26px;
+    margin: 18px 0 6px 0;
+    color: #2b2438;
+  }
+  .rb-content h2 {
+    font-size: 20px;
+    color: #4a2f78;
+    margin: 30px 0 10px 0;
+    scroll-margin-top: 74px;
+  }
+  .rb-content h3 {
+    font-size: 15.5px;
+    color: #5a3f8a;
+    margin: 20px 0 8px 0;
+    scroll-margin-top: 74px;
+  }
+  .rb-content p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 12px 0;
+    color: #33293f;
+  }
+  .rb-content ul.rb-list {
+    margin: 0 0 14px 0;
+    padding-left: 22px;
+  }
+  .rb-content ul.rb-list li {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 6px;
+    color: #33293f;
+  }
+  .rb-content strong { color: #2b2438; }
+  .rb-content em { color: #5a3f8a; }
+  .rb-content code {
+    font-family: Consolas, Menlo, monospace;
+    background: #f3effa;
+    color: #7c4fd6;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12.5px;
+  }
+  .rb-content a { color: #7c4fd6; }
+  .rb-content a.rb-anchor-link { text-decoration: underline; }
+  .rb-hr {
+    border: none;
+    border-top: 1px solid #e4dff0;
+    margin: 26px 0;
+  }
+  .rb-table {
+    border-collapse: collapse;
+    margin: 10px 0 16px 0;
+    font-size: 13.5px;
+  }
+  .rb-table th, .rb-table td {
+    border: 1px solid #e4dff0;
+    padding: 7px 14px;
+    text-align: left;
+  }
+  .rb-table th {
+    background: #f3effa;
+    color: #4a2f78;
+    font-weight: 700;
+  }
+
+  .glossary-section-wrap { max-width: 880px; margin: 0 auto; }
+
+</style>
+</head>
+<body>
+
+<div class="rb-wrap">
+  <div class="rb-nav">
+    <div class="rb-nav-title">Gay Dungeoneers Rulebook</div>
+    <div class="rb-nav-links">
+      <a href="#introduction">Introduction</a>
+      <a href="#1-character-creation">1. Character Creation</a>
+      <a href="#2-core-mechanics">2. Core Mechanics</a>
+      <a href="#3-initiative">3. Initiative</a>
+      <a href="#4-turns-action-points">4. Turns & Action Points</a>
+      <a href="#5-the-actions">5. The Actions</a>
+      <a href="#6-spellcasting">6. Spellcasting</a>
+      <a href="#7-weaknesses-status-effects">7. Weaknesses & Status Effects</a>
+      <a href="#8-party-groups-roles">8. Party, Groups & Roles</a>
+      <a href="#9-talents-leveling">9. Talents & Leveling</a>
+      <a href="#10-dungeon-runs">10. Dungeon Runs</a>
+      <a href="#11-glossary">11. Glossary</a>
+      <a href="#level-up-simulator">Level-Up Simulator</a>
+    </div>
+  </div>
+  <div class="rb-content">
+<h2 id="introduction">Introduction</h2>
+<p>Gay Dungeoneers is a homebrew system that splices Dungeons & Dragons with Cortex Prime, aiming for a middle ground between the two.</p>
+<p>D&D and Cortex Prime each solve a different problem. D&D delivers satisfying tactical combat, but narration and mechanics stay separate — however creatively you describe a sword swing, it resolves the same way. Cortex does the opposite: your narration sets the traits in your dice pool, so how you describe an action directly shapes how it's resolved.</p>
+<p>The tradeoff is that Cortex abstracts combat. That suits fast, cinematic conflicts, but the tactical depth and tension our group wants has to be rebuilt through custom SFX and optional mods — bolted on rather than built in.</p>
+<p>Gay Dungeoneers keeps Cortex's narrate-first philosophy but pairs it with a D&D-style combat framework: narration shapes mechanics, while rolling for damage, landing crits, and grinding down an opponent still matter. It's not an improvement on either system — both do what they're designed to do well — just an experiment in combining what we liked most from each.</p>
+<h3 id="the-world">The World</h3>
+<p>This setting revolves around dungeons. Their depths promise wealth, power, and discovery, drawing countless people to make a living exploring them. Whether your character is in it for fortune, fame, knowledge, or something more personal is a story for you and your DM to tell.</p>
+<h3 id="character-building">Character Building</h3>
+<p>This system is built around the idea of a tabletop roguelike. Rather than following a traditional class progression, characters begin with only a broad combat role — Damage, Tank, or Support. The rest of their build develops organically through the talents they acquire during each dungeon run, allowing the same character to play differently from one expedition to the next.</p>
+<p>Combat is therefore the primary focus of the system. Each run is designed to present new combinations of talents and new tactical decisions, encouraging experimentation over optimization. Progress earned inside a dungeon is temporary: talents and levels are lost upon escaping or dying. Lasting progression comes from the world outside the dungeon — building relationships, acquiring equipment, and improving skills during downtime. A compelling setting between expeditions is therefore just as important as the dungeon itself.</p>
+<h3 id="playing-this-system">Playing This System</h3>
+<p>This system wasn't designed to be run purely with paper and dice — it started life as an <a href="https://avrae.io" target="_blank" rel="noopener">Avrae</a> alias collection, and that's still the intended way to play it: <a href="https://avrae.io/dashboard/workshop/6a621bcd94504f0b0135bfdf" target="_blank" rel="noopener">Gay Dungeoneers Alias Collection</a>.</p>
+<p>A fair amount of what's in this book leans on math the bot is quietly handling behind the scenes — critical tier scaling, success tier scaling, status effect stacking, and more. None of it is impossible to run by hand, but it adds up fast at the table. Unless you're up for tweaking the system to make manual play smoother, running it through the alias collection is heavily recommended.</p>
+<hr class="rb-hr">
+<h2 id="1-character-creation">1. Character Creation</h2>
+<h3 id="background-bonuses">Background Bonuses</h3>
+<p>Every character starts with three background bonuses, each a flat <strong>+1</strong>: <strong>Race, Occupation,</strong> and <strong>Affiliation</strong>. Race and Occupation follow directly from your concept. Affiliation takes more thought — work with your DM to settle on the faction, group, belief, or bond your character is tied to.</p>
+<h3 id="stats">Stats</h3>
+<p>Every character is built on three stats: <strong>Physical</strong>, <strong>Mental</strong>, and <strong>Social</strong>.</p>
+<ul class="rb-list">
+<li><strong>Physical</strong> — Your body in action: strength, endurance, dexterity, raw physical capability.</li>
+<li><strong>Mental</strong> — Your mind in action: intellect, willpower, magical aptitude, cunning.</li>
+<li><strong>Social</strong> — Your presence in action: charisma, empathy, force of personality.</li>
+</ul>
+<h3 id="skills">Skills</h3>
+<p>Skills sit underneath those stats, but they aren't locked to one — any skill can pair with whichever stat best fits how you're narrating the action.</p>
+<ul class="rb-list">
+<li><strong>Cast</strong> — Channeling and shaping magic into an effect.</li>
+<li><strong>Endure</strong> — Withstanding pain, exhaustion, disease, or hardship.</li>
+<li><strong>Fight</strong> — Striking something up close, armed or unarmed.</li>
+<li><strong>Finesse</strong> — Fine, deliberate manual precision: lockpicking, forgery, delicate craftsmanship.</li>
+<li><strong>Focus</strong> — Concentration and mental discipline under pressure.</li>
+<li><strong>Influence</strong> — Persuading, inspiring, or pressuring someone through honest appeal.</li>
+<li><strong>Know</strong> — Recalling or reasoning out information you've learned.</li>
+<li><strong>Labor</strong> — Sustained physical exertion: hauling, digging, building, breaking.</li>
+<li><strong>Move</strong> — Speed, agility, and reflexes in motion.</li>
+<li><strong>Notice</strong> — Picking up on details others miss.</li>
+<li><strong>Perform</strong> — Entertaining or holding an audience's attention.</li>
+<li><strong>Shoot</strong> — Striking something at range with a projectile, physical or magical.</li>
+<li><strong>Sneak</strong> — Moving or acting without being detected.</li>
+<li><strong>Survive</strong> — Reading and enduring the wilds: tracking, foraging, weathering the elements.</li>
+<li><strong>Throw</strong> — Hurling an object accurately.</li>
+<li><strong>Tinker</strong> — Building, repairing, or fiddling with mechanisms and devices.</li>
+<li><strong>Treat</strong> — Tending wounds and ailments, mundane or magical.</li>
+<li><strong>Trick</strong> — Deceiving, misdirecting, or talking your way around the truth.</li>
+</ul>
+<h3 id="assigning-points">Assigning Points</h3>
+<p>You get either <strong>two +3s</strong> or <strong>one +4</strong> to assign across your stats and skills, in any combination. Anything you don't raise defaults to +0, though you can also bump individual stats or skills to +1 or +2 without touching your +3s/+4.</p>
+<table class="rb-table"><tr><th>Bonus</th><th>Meaning</th></tr><tr><td>+0</td><td>Average</td></tr><tr><td>+1</td><td>Familiar</td></tr><tr><td>+2</td><td>Learned</td></tr><tr><td>+3</td><td>Genius</td></tr><tr><td>+4</td><td>Honed to perfection</td></tr><tr><td>+5</td><td>The best in the setting</td></tr></table>
+<p>Negatives use the same table in reverse and are optional. A flaw or two adds more character than a sheet of pure strengths. If unsure how far to take it, cap it at <strong>-3</strong>.</p>
+<h3 id="extra-bonuses">Extra Bonuses</h3>
+<p>You have <strong>4 points</strong> to spend on extra bonuses — niche specialties not covered by a stat or skill. You might have +0 Shoot overall but exceptional skill with a bow specifically, so all 4 points go into +4 Archery. These don't have to be combat-related: spotting a halfling from a gnome at a glance, or flawless calligraphy, both qualify.</p>
+<p>How far your points go depends on specificity. A general bonus — cooking, drawing — caps at +2 unless you can justify +4 to your DM. A genuinely niche one — stir-frying specifically, drawing girls specifically — needs no justification; put all 4 points in if you want.</p>
+<h3 id="weaknesses">Weaknesses</h3>
+<p>Same idea as negative stats and skills: cap at <strong>-3</strong> if unsure. Unlike stats and skills, there's no limit on how many weaknesses you can take — vices, allergies, phobias, whatever fits your character.</p>
+<hr class="rb-hr">
+<h2 id="2-core-mechanics">2. Core Mechanics</h2>
+<h3 id="building-a-pool">Building a Pool</h3>
+<p>Every roll needs at least one stat and one skill. Beyond that, background bonuses, extra bonuses, item bonuses, and even weaknesses can fold into your pool if your narration justifies it. Nothing is added automatically — if you can't make a case for it, it doesn't apply.</p>
+<p>The DM decides whether a pairing or bonus fits your description.</p>
+<h3 id="meets-it-beats-it">Meets It Beats It</h3>
+<p>Nearly everything resolves the same way: roll your pool (d20 + modifiers) against a target number. Equal or higher succeeds. This applies to attacking, creating an advantage, or resisting — only what a success does changes, covered action by action below.</p>
+<hr class="rb-hr">
+<h2 id="3-initiative">3. Initiative</h2>
+<p>Roll a d20 + Physical + Move. Highest total acts first.</p>
+<p>Groups (see <a href="#8-party-groups-roles" class="rb-anchor-link">Party, Groups & Roles</a>) roll together instead of individually: average every member's Physical + Move, and use that as the modifier for one d20 roll representing the group.</p>
+<p>Initiative rerolls for everyone at the start of every round, so turn order changes each round.</p>
+<hr class="rb-hr">
+<h2 id="4-turns-action-points">4. Turns & Action Points</h2>
+<p>Every combatant has <strong>3 Action Points (AP)</strong>, refreshing at the start of each round, not at the start of your turn. AP spent reacting earlier in the round is AP you won't have on your own turn, and vice versa.</p>
+<p>There are five actions: <strong>Attack, Create an Advantage, Help, Move,</strong> and <strong>React</strong>.</p>
+<p>With one exception, each action costs AP equal to how many actions you've already taken <strong>this round</strong>, counted across all action types combined. Your first action costs 1 AP, your second costs 2 AP, your third would cost 3 AP — since you only have 3 AP total, two actions per round is the practical ceiling.</p>
+<p>This counter is shared: Attack, then Help, then Create an Advantage still costs 1, then 2, then 3, regardless of which actions you mix.</p>
+<p><strong>React is the exception</strong> — it never escalates and doesn't count toward the shared counter. It has its own flat cost, covered below.</p>
+<hr class="rb-hr">
+<h2 id="5-the-actions">5. The Actions</h2>
+<h3 id="attack">Attack</h3>
+<p>The attacker narrates their action first, which determines their pool (stat, skill, extra bonuses). The defender then narrates their reaction and builds their own pool. The defender's total becomes the DC the attacker must meet or beat.</p>
+<p>Meeting or beating that number is a hit; falling short deals no damage.</p>
+<p>On a hit, check the margin. Every full <strong>+10</strong> of margin grants one <strong>critical tier</strong>, uncapped.</p>
+<p>Each critical tier multiplies your damage dice: total dice = base dice × (critical tiers + 1). A base 2d10 attack becomes 4d10 at one tier, 6d10 at two, and so on.</p>
+<h3 id="create-an-advantage">Create an Advantage</h3>
+<p>Narrate what you're trying to create — a bonus for yourself or an ally, or a weakness on an enemy. The DM sets a DC based on the difficulty. Meet or beat it to succeed.</p>
+<p>Success grants at least 1 <strong>success tier</strong> for clearing the DC, plus one more per full <strong>+4</strong> of margin, uncapped. The tier is the strength of what you made — a roll of 12 against a DC of 8 (margin 4) creates something at +2, whether that's a +2 bonus for an ally or a -2 weakness on an enemy.</p>
+<h3 id="help">Help</h3>
+<p>Narrate how you're helping, then add your relevant skill modifier as a bonus to an ally's roll. Multiple allies can help the same person and those bonuses stack, but the same helper can't help the same target twice on the same roll.</p>
+<h3 id="move">Move</h3>
+<p>Move a number of tiles equal to (Physical + Move) ÷ 2, rounded down, minimum 1.</p>
+<h3 id="react">React</h3>
+<p>Reactions respond to another combatant's action and are the one part of the action economy that doesn't escalate.</p>
+<p><strong>Defend.</strong> Build a defense pool against an incoming attack as normal. Costs 1 AP flat — consecutive defends never cost more.</p>
+<p>Out of AP when you need to defend? You become <strong>Overwhelmed</strong>: you can still defend, but take a cumulative -2 penalty for each consecutive attack you defend against with no AP left.</p>
+<p><strong>Concede.</strong> Let the attack land outright instead of defending. It auto-hits but costs no AP. Since there's no DC to beat, there's no margin — the hit can never crit. Against a small attack, conceding to bank AP is often the smarter play.</p>
+<p><strong>Intercept.</strong> Take a hit meant for an ally. You roll your <em>own</em> defense pool, built around how you narrate the intercept — blocking with a shield might be Physical + Endure — and the attacker's roll is measured against your total instead of your ally's. Only you roll, and only you spend AP.</p>
+<p>Required proximity depends on the narration: shoving in with a shield means being adjacent; deflecting an arrow from across the room doesn't. The DM judges plausibility.</p>
+<p>A failed intercept also depends on the narration. Up close — blocking with a shield — a failed roll means the attack hits you instead. At range — knocking a projectile out of the air — a failed roll means the attack still finds your ally.</p>
+<p>Costs 2 AP flat (base React cost plus a 1 AP surcharge); consecutive intercepts still cost 2 AP.</p>
+<p><strong>Counterattack.</strong> Roll an attack back against your attacker instead of defending. Whoever rolls higher lands the hit; the loser takes the winner's damage. Ties go to the original attacker. Costs 2 AP flat, no escalation on repeats.</p>
+<p><strong>Help (reactive).</strong> Same rules as Help above, used as a reaction. Costs 2 AP flat, no escalation on repeats.</p>
+<hr class="rb-hr">
+<h2 id="6-spellcasting">6. Spellcasting</h2>
+<p>Every spell requires <strong>Channeling</strong> first: use a Create an Advantage action targeting yourself against the spell's listed DC — your success tier becomes your Channeling bonus. Some spells need a minimum amount banked before you can cast them.</p>
+<p>Once you have enough, spend it on a later action to cast the spell.</p>
+<hr class="rb-hr">
+<h2 id="7-weaknesses-status-effects">7. Weaknesses & Status Effects</h2>
+<p>A debilitating hit — burning you, restraining you, knocking you off balance — applies a <strong>weakness</strong> to your defense pool. That weakness has a name (its "parent," like <em>Burning</em> or <em>Concussed</em>) and a magnitude, and carries an attached <strong>status effect</strong> describing what happens each round. Most status effects scale off that magnitude — the <strong>parent modifier</strong>.</p>
+<p>The full list of status effects is in the <a href="#11-glossary" class="rb-anchor-link">Glossary</a>, alongside the talent list.</p>
+<hr class="rb-hr">
+<h2 id="8-party-groups-roles">8. Party, Groups & Roles</h2>
+<p>Combatants can form groups of up to <strong>3</strong>. Grouping affects two things:</p>
+<ul class="rb-list">
+<li><strong>Initiative</strong> — the group rolls once together, using the averaged Physical + Move modifier described in <a href="#3-initiative" class="rb-anchor-link">Initiative</a>.</li>
+<li><strong>Hit points</strong> — the group shares one combined HP pool. If that pool hits 0, everyone in the group dies together.</li>
+</ul>
+<p>That shared fate is why who you group with — and what role each person plays — matters before a run starts.</p>
+<p>There are three roles: <strong>Damage, Tank,</strong> and <strong>Support.</strong></p>
+<hr class="rb-hr">
+<h2 id="9-talents-leveling">9. Talents & Leveling</h2>
+<p>At the start of a dungeon run, you pick a role. This determines your talent pool: your role's talents plus General. Skip a role and the DM pools Damage, Tank, Support, and General together instead. Either way, you're offered <strong>3 options</strong>.</p>
+<p>Outside the dungeon, your character sits at <strong>Level 0</strong> — no need to track hit points or mana during downtime. The system isn't built for combat outside the dungeon; making that work is homebrew territory.</p>
+<p>Entering a dungeon grants your first level. After that, leveling pace is up to your table — we default to a level every <strong>3 rooms</strong> cleared, as a suggested pace rather than a rule. Each level grants:</p>
+<ul class="rb-list">
+<li><strong>1d10 hit points</strong> (minimum 5)</li>
+<li><strong>1d8 mana</strong> (minimum 4)</li>
+<li><strong>One more talent</strong>, offered as a fresh set of 3 options</li>
+</ul>
+<p>Talent picks aren't locked to your starting role — pick from Tank at the start, then pull from Damage on a later level-up if you want. Every level-up re-offers options from whichever pools you choose.</p>
+<hr class="rb-hr">
+<h2 id="10-dungeon-runs">10. Dungeon Runs</h2>
+<p>A run is structured in rooms. Every <strong>10th room</strong> is a boss fight.</p>
+<p>Defeating the boss grants your whole group a random-sized <strong>wishbox</strong>.</p>
+<p>If your group's shared HP pool hits 0, that's permadeath — roll new characters.</p>
+<p>If you don't think you can survive the next room, you can <strong>escape</strong> instead. That's always an option, but it wipes your progress entirely: level resets to 1, and you lose every talent from the run.</p>
+<p>The only progression that survives between runs happens during <strong>downtime sessions</strong> outside the dungeon, where you can learn new skills or abilities, or buy items for your next attempt.</p>
+<hr class="rb-hr">
+
+  </div>
+</div>
+
+<div class="glossary-section-wrap">
+<h2 id="11-glossary" style="scroll-margin-top:74px; font-size:20px; color:#4a2f78; margin:0 0 10px 0;">11. Glossary</h2>
+<div class="subtitle">Talents and status effects — sortable, filterable, always current with descriptions.json.</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="talents">Talents</button>
+  <button class="tab-btn" data-tab="effects">Status Effects</button>
+</div>
+
+<div class="panel active" id="panel-talents">
+  <div class="filter-row">
+    <div class="filter-group">
+      <div class="filter-label">Category</div>
+      <div class="chip-row" id="talent-cat-chips"></div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Rarity</div>
+      <div class="chip-row" id="talent-rarity-chips"></div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">Archetype</div>
+      <div class="chip-row" id="talent-archetype-chips"></div>
+    </div>
+    <div class="count-badge" id="talent-count"></div>
+  </div>
+  <div class="grid-wrap" id="talent-grid"></div>
+</div>
+
+<div class="panel" id="panel-effects">
+  <div class="filter-row">
+    <div class="filter-group">
+      <div class="filter-label">Category</div>
+      <div class="chip-row" id="effect-cat-chips"></div>
+    </div>
+    <div class="count-badge" id="effect-count"></div>
+  </div>
+  <div class="grid-wrap" id="effect-grid"></div>
+</div>
+
+<div class="sim-section" id="level-up-simulator" style="scroll-margin-top:74px;">
+  <h3 class="sim-heading">Level-Up Simulator</h3>
+  <div class="sim-subtitle">Mirrors what <code>!lvlup</code> actually rolls: HP/MP gains plus 3 talent options, weighted 5% legendary / 15% rare / 80% common per pick.</div>
+  <div class="sim-buttons">
+    <button class="sim-btn" data-role="Damage">Damage</button>
+    <button class="sim-btn" data-role="Tank">Tank</button>
+    <button class="sim-btn" data-role="Support">Support</button>
+    <button class="sim-btn sim-btn-surprise" data-role="">Surprise Me</button>
+  </div>
+  <div id="sim-result"></div>
+</div>
+
+<script>
+const TALENTS = [
+  {name:"Lethal Strike", category:"Damage", rarity:"Common", archetype:"", stacks:"", desc:"On a critical hit, apply Bleeding (Bleed)."},
+  {name:"Fire Resistance", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Fire-based attacks against you are halved."},
+  {name:"Deflecting", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Ranged attacks against you are redirected to a random opponent instead."},
+  {name:"Oil and Water", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"While you are on a yellow tile, you deal double damage to Ying and half damage to Yan. While you are on a blue tile, you deal double damage to Yan and half damage to Ying."},
+  {name:"Gnash", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Your attacks deal no direct damage. Instead, the target gains Agony equal to the damage you would have dealt."},
+  {name:"Fiery Touch", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you deal or take damage from a melee attack (using Fight), the other creature gains Burning (Burn)."},
+  {name:"Barkskin", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Physical damage you take is halved. Fire sources deal double damage to you instead."},
+  {name:"Salamander", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"You are immune to fire-based damage. Cold attacks deal double damage to you instead."},
+  {name:"Pursuit", category:"Damage", rarity:"Rare", archetype:"Hunter", stacks:"", desc:"Gain 1 Hunter. Whenever you hit with an attack, apply Deep Wounds (Wounded)."},
+  {name:"Tormentor", category:"Damage", rarity:"Rare", archetype:"", stacks:"", desc:"Your attack damage is halved, but the target gains Torment (Agony) equal to the damage you would have dealt before the halving."},
+  {name:"Bramble", category:"Tank", rarity:"Common", archetype:"Druid", stacks:"", desc:"Gain 1 Druid. Whenever you take damage from an attack, your attacker takes damage equal to Druid."},
+  {name:"Rage", category:"Tank", rarity:"Common", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Whenever you take damage, halve it and add the other half to Enraged. Add Enraged to your next attack, then remove it. If the halved damage would push Enraged past the threshold (10, +2 per Rampager), it bursts instead: take extra damage equal to Enraged, then remove it."},
+  {name:"Sneak Attack", category:"Damage", rarity:"Rare", archetype:"Thief", stacks:"", desc:"Gain 1 Thief. While hidden, your next attack gains a critical tier equal to Thief."},
+  {name:"Stance of the White Snake", category:"Damage", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist and the Snakebite ability. Reduce your critical tier threshold by 1 for every 2 Martial Artist."},
+  {name:"Stance of the Azure Crane", category:"Tank", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist. Attacks against you increase their critical tier threshold by 1 for every 2 Martial Artist."},
+  {name:"Stance of the Iron Ox", category:"Tank", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist. Take halved damage, and gain Grit (Agony) equal to half of the damage you took."},
+  {name:"Stance of the Crimson Mantis", category:"Tank", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist and the Thousand Needles ability. Your counterattacks only cost 1 Action Point."},
+  {name:"Memento Vivere", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Whenever you roll a natural 1, gain Memento Vivere. At 2 stacks, your next natural 1 becomes a natural 20, then remove all Memento Vivere."},
+  {name:"Jack of All Trades", category:"General", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Your d20 rolls can't go below 10, success tiers can't exceed 2, and critical tiers can't exceed 1."},
+  {name:"Jackpot", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Replace your d20 rolls with 3d6. Rolling three of a kind grants a Jackpot based on the matching value: 111 grants +1 success tier; 222 grants +2 success tiers and +1 critical tier; 333 grants +3 success tiers and +2 critical tiers; 444 grants +4 success tiers and +3 critical tiers; 555 grants +5 success tiers and +4 critical tiers; 666 grants +6 success tiers and +5 critical tiers."},
+  {name:"Opportunist", category:"Damage", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you hit a target with a weakness in its defense pool, that attack gains 1 critical tier."},
+  {name:"Blitz", category:"Damage", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you kill a creature with an attack, refund all Action Points spent on that attack."},
+  {name:"Mercy Killer", category:"Damage", rarity:"Legendary", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you land a critical hit on a creature with Agony, consume all of its Agony and add it to that attack's damage. If your attack leaves a target at or below 5% hit points, execute it instead. This threshold increases by 1% for each Cleric."},
+  {name:"Coupé", category:"Damage", rarity:"Rare", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. Deal bonus damage equal to Duelist for each weakness the target has in their defense roll."},
+  {name:"Overwhelm", category:"Damage", rarity:"Rare", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Your attacks can't gain critical tiers. Convert each point above the DC into direct damage instead."},
+  {name:"Tough", category:"Tank", rarity:"Common", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Reduce all damage taken from attacks by Knight."},
+  {name:"Immovable", category:"Tank", rarity:"Common", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Reduce damage you take from damage-per-round effects by Knight."},
+  {name:"Aura of Devotion", category:"Tank", rarity:"Rare", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Allies next to you take reduced damage equal to Knight."},
+  {name:"Aura of Serenity", category:"Support", rarity:"Rare", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Allies next to you reduce incoming weaknesses equal to Cleric."},
+  {name:"En Garde", category:"Tank", rarity:"Common", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. While wielding a one-handed sword, reduce damage from a non-critical hit by rolling your weapon die."},
+  {name:"Riposte", category:"Tank", rarity:"Rare", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. Whenever a creature misses you with a melee attack, make a melee attack against it using your defense roll and equipped one-handed weapon."},
+  {name:"Glory", category:"Tank", rarity:"Rare", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. The first time you'd be reduced to 0 hit points each combat, restore hit points equal to Valkyrie instead."},
+  {name:"Paragon", category:"Tank", rarity:"Common", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. Whenever you successfully intercept an attack for an ally, that ally gains Rallied (Morale) equal to Valkyrie."},
+  {name:"Rolling Tide", category:"Tank", rarity:"Common", archetype:"Swashbuckler", stacks:"", desc:"Gain 1 Swashbuckler. Whenever you dodge an attack using Move, gain Sway (Morale) equal to Swashbuckler."},
+  {name:"Battle-Hardened", category:"Tank", rarity:"Rare", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. Whenever you're critically hit, reduce the attack's critical tier by 1 for every 2 Valkyrie."},
+  {name:"Tenacity", category:"Tank", rarity:"Rare", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Whenever you gain a weakness, reduce its modifier by Knight."},
+  {name:"Observant", category:"Support", rarity:"Common", archetype:"Sharp Eye", stacks:"", desc:"Gain 1 Sharp Eye. You may reroll Notice checks made using Sharp Eye once."},
+  {name:"Agile", category:"General", rarity:"Common", archetype:"Thief", stacks:"", desc:"Gain 1 Thief. You may reroll Move checks made using Thief once."},
+  {name:"Silver Tongue", category:"Support", rarity:"Common", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Mock ability. You may reroll Influence or Trick checks made using Bard once."},
+  {name:"Heavy Swings", category:"Damage", rarity:"Common", archetype:"", stacks:"", desc:"Gain 1 Fight. Melee attacks apply your Fight modifier to damage instead of the attack roll."},
+  {name:"Deadeye", category:"Damage", rarity:"Rare", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. At the start of each round, you have a 10% chance to gain Tumbleweed (Precision), +5% for each Spellslinger. If you made no rolls last round, add another 20%."},
+  {name:"Pyromancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 4", desc:"Gain 1 Pyromancer and the following abilities for each point: 1 — Flame Bolt, Flame Ward; 2 — Siphon Warmth, Flame Pillar; 3 — Heat Ray, Wall of Fire; 4 — Armageddon, Incinerate."},
+  {name:"Cryomancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 3", desc:"Gain 1 Cryomancer and the following abilities for each point: 1 — Icicle, Freeze; 2 — Cold Touch, Snowstorm; 3 — Shatter, Frozen Tomb."},
+  {name:"Geomancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 3", desc:"Gain 1 Geomancer and the following abilities for each point: 1 — Earth Disc, Earth Armor; 2 — Wall of Earth, Move Earth; 3 — Earth Grasp, Earthquake."},
+  {name:"Shrapnel", category:"Damage", rarity:"Common", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. Whenever you deal ranged damage, apply Shrapnel (Agony) with a modifier equal to Spellslinger."},
+  {name:"Split Shot", category:"Damage", rarity:"Common", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. While there are at least two enemies, your ranged damage is halved and the other half deals damage to a random enemy."},
+  {name:"Aggravator", category:"Damage", rarity:"Common", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Whenever you miss with an attack, gain Aggravated (Bolster)."},
+  {name:"Predator", category:"Damage", rarity:"Common", archetype:"Hunter", stacks:"", desc:"Gain 1 Hunter. Gain a bonus equal to Hunter on attack rolls against injured targets, doubled if they're below half their maximum hit points."},
+  {name:"Trophy", category:"Damage", rarity:"Common", archetype:"Hunter", stacks:"", desc:"Gain 1 Hunter. Whenever you reduce a creature to 0 hit points, restore hit points equal to Hunter."},
+  {name:"Uplifting", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you use Cleric in your pool to grant an extra bonus to an ally, increase it by Cleric."},
+  {name:"Pinpoint Precision", category:"Support", rarity:"Common", archetype:"Sharp Eye", stacks:"", desc:"Gain 1 Sharp Eye. Whenever you use Sharp Eye in a Notice or Know check that creates a weakness, increase its modifier by Sharp Eye."},
+  {name:"Overwatch", category:"Support", rarity:"Rare", archetype:"Sharp Eye", stacks:"", desc:"Gain 1 Sharp Eye. Your group gains a bonus to their defense rolls equal to your Notice skill."},
+  {name:"Reliable", category:"Support", rarity:"Rare", archetype:"", stacks:"", desc:"When helping someone, double your skill modifier."},
+  {name:"Helping Hand", category:"Support", rarity:"Common", archetype:"", stacks:"", desc:"When you help someone, grant them Inspired (Inspiration)."},
+  {name:"Sadistic", category:"Support", rarity:"Common", archetype:"", stacks:"", desc:"Whenever you create a weakness on an enemy, increase its modifier by 1."},
+  {name:"Masochistic", category:"Tank", rarity:"Common", archetype:"", stacks:"", desc:"Reduce damage you take by 1 for each weakness in your defense pool."},
+  {name:"Second Wind", category:"Tank", rarity:"Rare", archetype:"", stacks:"", desc:"Regain 1d4 hit points at the end of each combat."},
+  {name:"Compassion", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you restore hit points, increase the healing by Cleric."},
+  {name:"Cleansing Heal", category:"Support", rarity:"Rare", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Your heals can reduce a chosen weakness by up to your Cleric."},
+  {name:"Nurturing", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Your heals grant Nurtured (Morale) equal to Cleric."},
+  {name:"Empowering", category:"Support", rarity:"Common", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Your heals grant Empowered (Bolster) equal to Bard."},
+  {name:"Blood Pact", category:"Support", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. While you have no mana, you may spend hit points to cast spells instead."},
+  {name:"Terror", category:"Damage", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you deal damage, all enemies gain Terror (Agony) equal to Warlock."},
+  {name:"Vengeful", category:"Tank", rarity:"Common", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Whenever you take damage, all enemies gain Spite (Agony) equal to Warlock."},
+  {name:"Vessel", category:"General", rarity:"Legendary", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you kill a creature, add +1 to a random stat."},
+  {name:"Encore", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Encourage ability. Whenever anyone in your group lands a critical hit using Morale, restore mana equal to that attack's critical tier."},
+  {name:"Inspiring", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Inspire ability."},
+  {name:"Spell Efficiency", category:"General", rarity:"Rare", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and the Meditate ability. When you cast a spell, there is a 5% chance to refund 50% of its mana cost. This chance increases by an extra 5% for each Wizard."},
+  {name:"Clarity", category:"General", rarity:"Common", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and 1 Focus. You may reroll Focus checks made using Wizard once."},
+  {name:"Replicator", category:"General", rarity:"Rare", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and the Copy ability. The duration of the copied ability extends equal to Wizard."},
+  {name:"Quick Caster", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Channeling and Charging abilities skip their buildup roll entirely. Cast them straight away, as if already fully charged."},
+  {name:"Resonance", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Whenever you use Bard in your pool to grant an extra bonus to an ally, a random ally also gains the effect."},
+  {name:"Stat Bonus (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +1 in a chosen stat."},
+  {name:"Stat Bonus (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +2 in a chosen stat."},
+  {name:"Stat Bonus (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +3 in a chosen stat."},
+  {name:"Favored (Common)", category:"General", rarity:"Common", archetype:"", stacks:"", desc:"Select a talent of your choice up to Common."},
+  {name:"Favored (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"", desc:"Select a talent of your choice up to Rare."},
+  {name:"Favored (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Select a talent of your choice up to Legendary."},
+  {name:"Healthy (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +2 HP."},
+  {name:"Healthy (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +5 HP."},
+  {name:"Healthy (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +10 HP."},
+  {name:"Fresh (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +2 MP."},
+  {name:"Fresh (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +5 MP."},
+  {name:"Fresh (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +10 MP."},
+  {name:"Skill Bonus (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +1 in a chosen skill."},
+  {name:"Skill Bonus (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +2 in a chosen skill."},
+  {name:"Skill Bonus (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +3 in a chosen skill."}
+];
+
+const EFFECTS = [
+  {name:"Burn", category:"Damage Per Round", desc:"Take damage equal to Burning at the start of each round, and Burning decreases naturally by 1 each round. You can't regain hit points while Burning is active."},
+  {name:"Bleed", category:"Damage Per Round", desc:"Take damage equal to Bleeding at the start of each round. Bleeding doesn't decrease naturally; whenever you regain hit points, reduce the healing and Bleeding by the same amount."},
+  {name:"Poison", category:"Damage Per Round", desc:"Take damage equal to Poisoned at the start of each round and apply the Poison penalty to all rolls. Poison doesn't decrease naturally."},
+  {name:"Agony", category:"Damage Per Round", desc:"Take 1 damage at the start of each round, and reduce the parent modifier by 1."},
+  {name:"Mana Burn", category:"Damage Per Round", desc:"Lose 1 mana at the start of each round, and reduce the parent modifier by 1."},
+  {name:"Honey Badgered", category:"Damage Per Round", desc:"Take 1d6 damage at the start of each round, and reduce all your rolls by 1d6 (rerolled each time). Get It Off Me! decreases naturally by 1 each round."},
+  {name:"Concussion", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to rolls. Reduce the parent modifier by 1 each time it applies."},
+  {name:"Restrained", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Fight, Throw, and Move rolls. Ends when the parent modifier reaches 0."},
+  {name:"Disarm", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Fight, Shoot, and Throw rolls. Ends when the parent modifier reaches 0."},
+  {name:"Immobilized", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Move rolls. Ends when the parent modifier reaches 0."},
+  {name:"Fear", category:"Control", desc:"You cannot target the creature that frightened you with attacks. Ends when the parent modifier reaches 0."},
+  {name:"Freezing", category:"Control", desc:"Reduce the parent modifier by 1 each round. At -5 or lower, this effect becomes Frozen (Incapacitated)."},
+  {name:"Demoralize", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to your next roll, then end."},
+  {name:"Wounded", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Endure rolls, and increase all damage taken by the same amount. Ends when the parent modifier reaches 0."},
+  {name:"Exposed", category:"Control", desc:"The next hit you take consumes this effect and its parent modifier entirely, rolling that attack's damage dice at maximum. Decreases naturally by 1 each round."},
+  {name:"Incapacitated", category:"Control", desc:"You cannot act on your turn."},
+  {name:"Resistance", category:"Defense", desc:"Halve all incoming damage."},
+  {name:"Invulnerable", category:"Defense", desc:"Take no damage."},
+  {name:"Deflecting", category:"Defense", desc:"Ranged attacks against you are redirected to a random opponent of yours instead."},
+  {name:"Counter", category:"Defense", desc:"Reflect a percentage of pre-mitigation damage back to the attacker if the attack was melee."},
+  {name:"Warded", category:"Defense", desc:"Absorb incoming damage up to the parent modifier before it reduces your hit points."},
+  {name:"Hiding", category:"Bonus", desc:"You are hidden. Ends immediately after you attack."},
+  {name:"Morale", category:"Bonus", desc:"Add the parent modifier to your next roll, then end."},
+  {name:"Precision", category:"Bonus", desc:"Reduce your next ranged attack's critical tier threshold by the parent modifier, then end and remove it."},
+  {name:"Bolster", category:"Bonus", desc:"Add the parent modifier to the damage of your next attack, then end."},
+  {name:"Power", category:"Bonus", desc:"Add damage dice equal to the parent modifier to your next attack, counting as part of the base die for critical hits. Reduce that attack's roll by 2 per point of parent modifier, then end."},
+  {name:"Barrage", category:"Bonus", desc:"While you have action points, your attacks cost none and deal half damage. Each attack reduces the parent modifier by 1, ending once it reaches 0. Missing an attack empties your action points."},
+  {name:"Inspiration", category:"Bonus", desc:"Reroll your next roll once, then reduce the parent modifier by 1, ending once it reaches 0."},
+  {name:"Regeneration", category:"Bonus", desc:"Heal 1 hit point at the start of each round, and reduce the parent modifier by 1."}
+];
+
+function rarityBadge(r) {
+  const cls = "badge-" + r.toLowerCase();
+  return `<span class="badge ${cls}">${r}</span>`;
+}
+function catBadge(c) {
+  const cls = "badge-cat-" + c.toLowerCase().replace(/\s+/g, "");
+  return `<span class="badge ${cls}">${c}</span>`;
+}
+
+let talentCatFilter = "All";
+let talentRarityFilter = "All";
+let talentArchetypeFilter = "All";
+let effectCatFilter = "All";
+
+const talentCats = ["All", "Damage", "Tank", "Support", "General", "Innate"];
+const talentRarities = ["All", "Common", "Rare", "Legendary"];
+const talentArchetypes = ["All", "Bard", "Cleric", "Druid", "Duelist", "Elementalist", "Hunter", "Knight", "Martial Artist", "Rampager", "Sharp Eye", "Spellslinger", "Swashbuckler", "Thief", "Valkyrie", "Warlock", "Wizard"];
+const effectCats = ["All", "Damage Per Round", "Control", "Defense", "Bonus"];
+
+function buildChips(containerId, options, activeVal, onClick) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = "";
+  options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "chip" + (opt === activeVal ? " active" : "");
+    btn.textContent = opt;
+    btn.onclick = () => onClick(opt);
+    el.appendChild(btn);
+  });
+}
+
+function filteredTalents() {
+  return TALENTS.filter(t =>
+    (talentCatFilter === "All" || t.category === talentCatFilter) &&
+    (talentRarityFilter === "All" || t.rarity === talentRarityFilter) &&
+    (talentArchetypeFilter === "All" || t.archetype === talentArchetypeFilter)
+  );
+}
+
+function filteredEffects() {
+  return EFFECTS.filter(e => effectCatFilter === "All" || e.category === effectCatFilter);
+}
+
+let talentGrid, effectGrid;
+
+function renderTalentGrid() {
+  const data = filteredTalents();
+  document.getElementById("talent-count").textContent = data.length + " talent" + (data.length === 1 ? "" : "s");
+  // Cell data stays as plain, sortable strings — badges/notes are applied purely at
+  // render time via column formatters, so Grid.js's default string comparator works.
+  const rows = data.map(t => [t.name, t.stacks, t.category, t.rarity, t.archetype, t.desc]);
+  const columns = [
+    {
+      name: "Name",
+      width: "16%",
+      formatter: (cell, row) => {
+        const stacks = row.cells[1].data;
+        return gridjs.html(cell + (stacks ? ` <span class="stack-note">(${stacks})</span>` : ""));
+      }
+    },
+    { name: "Stacks", hidden: true },
+    {
+      name: "Category",
+      width: "11%",
+      formatter: (cell) => gridjs.html(catBadge(cell))
+    },
+    {
+      name: "Rarity",
+      width: "9%",
+      formatter: (cell) => gridjs.html(rarityBadge(cell))
+    },
+    {
+      name: "Archetype",
+      width: "12%",
+      formatter: (cell) => cell ? gridjs.html(`<span class="badge badge-archetype">${cell}</span>`) : ""
+    },
+    { name: "Description" }
+  ];
+  if (!talentGrid) {
+    talentGrid = new gridjs.Grid({
+      columns,
+      data: rows,
+      sort: true,
+      search: true,
+      pagination: { limit: 15 },
+      className: { table: "gridjs-table" }
+    }).render(document.getElementById("talent-grid"));
+  } else {
+    talentGrid.updateConfig({ columns, data: rows }).forceRender();
+  }
+}
+
+function renderEffectGrid() {
+  const data = filteredEffects();
+  document.getElementById("effect-count").textContent = data.length + " effect" + (data.length === 1 ? "" : "s");
+  const rows = data.map(e => [e.name, e.category, e.desc]);
+  const columns = [
+    { name: "Name", width: "16%" },
+    {
+      name: "Category",
+      width: "16%",
+      formatter: (cell) => gridjs.html(catBadge(cell))
+    },
+    { name: "Description" }
+  ];
+  if (!effectGrid) {
+    effectGrid = new gridjs.Grid({
+      columns,
+      data: rows,
+      sort: true,
+      search: true,
+      pagination: { limit: 15 },
+      className: { table: "gridjs-table" }
+    }).render(document.getElementById("effect-grid"));
+  } else {
+    effectGrid.updateConfig({ columns, data: rows }).forceRender();
+  }
+}
+
+function catClickHandler(v) {
+  talentCatFilter = v;
+  buildChips("talent-cat-chips", talentCats, talentCatFilter, catClickHandler);
+  renderTalentGrid();
+}
+function rarityClickHandler(v) {
+  talentRarityFilter = v;
+  buildChips("talent-rarity-chips", talentRarities, talentRarityFilter, rarityClickHandler);
+  renderTalentGrid();
+}
+function archetypeClickHandler(v) {
+  talentArchetypeFilter = v;
+  buildChips("talent-archetype-chips", talentArchetypes, talentArchetypeFilter, archetypeClickHandler);
+  renderTalentGrid();
+}
+function effectCatClickHandler(v) {
+  effectCatFilter = v;
+  buildChips("effect-cat-chips", effectCats, effectCatFilter, effectCatClickHandler);
+  renderEffectGrid();
+}
+
+buildChips("talent-cat-chips", talentCats, talentCatFilter, catClickHandler);
+buildChips("talent-rarity-chips", talentRarities, talentRarityFilter, rarityClickHandler);
+buildChips("talent-archetype-chips", talentArchetypes, talentArchetypeFilter, archetypeClickHandler);
+buildChips("effect-cat-chips", effectCats, effectCatFilter, effectCatClickHandler);
+
+renderTalentGrid();
+renderEffectGrid();
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+  });
+});
+
+// ---- Level-Up Simulator ----
+// Mirrors lvlup.py: HP = 1d10 (min 5), MP = 1d6 (min 4), and 3 talent offers.
+// Each offer rolls 1-100: <=5 legendary, <=20 rare (i.e. 6-20), else common — matching
+// the bot's actual thresholds (randint(1,101), <=5, <=20). Pool = role + General talents,
+// or every non-Innate talent when no role is chosen ("Surprise Me"). Innate talents are
+// never offered here, same as the bot (they're NPC/boss-only).
+
+function rollDie(sides) {
+  return 1 + Math.floor(Math.random() * sides);
+}
+
+function rollRarityTier() {
+  const roll = rollDie(100);
+  if (roll <= 5) return "Legendary";
+  if (roll <= 20) return "Rare";
+  return "Common";
+}
+
+function getCategoryPool(role) {
+  return TALENTS.filter(t => {
+    if (t.category === "Innate") return false;
+    if (!role) return true;
+    return t.category === role || t.category === "General";
+  });
+}
+
+function eligiblePool(categoryPool, rarity, excludeNames) {
+  return categoryPool.filter(t => {
+    if (rarity && t.rarity !== rarity) return false;
+    const stackable = !!t.stacks;
+    if (excludeNames.includes(t.name) && !stackable) return false;
+    return true;
+  });
+}
+
+function pickTalent(categoryPool, excludeNames) {
+  const tier = rollRarityTier();
+  let candidates = eligiblePool(categoryPool, tier, excludeNames);
+  if (candidates.length === 0) candidates = eligiblePool(categoryPool, null, excludeNames);
+  if (candidates.length === 0) return null;
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function simulateLevelUp(role) {
+  const categoryPool = getCategoryPool(role);
+  const excludeNames = [];
+  const picks = [];
+  for (let i = 0; i < 3; i++) {
+    const picked = pickTalent(categoryPool, excludeNames);
+    picks.push(picked);
+    if (picked && !picked.stacks) excludeNames.push(picked.name);
+  }
+  return {
+    hpRoll: Math.max(5, rollDie(10)),
+    mpRoll: Math.max(4, rollDie(6)),
+    picks
+  };
+}
+
+function renderSimResult(role, result) {
+  const roleLabel = role || "Surprise Me";
+  const el = document.getElementById("sim-result");
+  const fieldsHtml = result.picks.map((t) => {
+    if (!t) {
+      return `<div class="embed-field">
+        <div class="embed-field-name">No Talent Available</div>
+        <div class="embed-field-value">No eligible talents available!</div>
+      </div>`;
+    }
+    return `<div class="embed-field">
+      <div class="embed-field-name">${t.name} ${rarityBadge(t.rarity)}${t.archetype ? ` <span class="badge badge-archetype">${t.archetype}</span>` : ""}</div>
+      <div class="embed-field-value">${t.desc}</div>
+    </div>`;
+  }).join("");
+
+  el.innerHTML = `
+    <div class="embed-card">
+      <div class="embed-title">Simulated Level-Up — ${roleLabel}</div>
+      <div class="embed-desc">HP: <strong>+${result.hpRoll}</strong> (1d10, min 5)
+MP: <strong>+${result.mpRoll}</strong> (1d6, min 4)
+## Select a Talent</div>
+      <div class="embed-fields">${fieldsHtml}</div>
+    </div>
+  `;
+}
+
+document.getElementById("sim-result").innerHTML = `<div class="sim-placeholder">Pick a role above to roll a level-up.</div>`;
+
+document.querySelectorAll(".sim-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const role = btn.dataset.role;
+    const result = simulateLevelUp(role || null);
+    renderSimResult(role, result);
+  });
+});
+</script>
+
+</div>
+</body>
+</html>
