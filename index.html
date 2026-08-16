@@ -301,11 +301,217 @@
     font-style: italic;
   }
 
+  /* Page-level tabs (Rulebook / Builder) */
+  .page-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    gap: 6px;
+    margin: -24px -24px 20px -24px;
+    padding: 12px 24px;
+    background: #0a0910;
+    border-bottom: 1px solid #262030;
+  }
+  .page-tab-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 700;
+    color: #9891a8;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .page-tab-btn:hover { color: #c9a8f5; background: #16131c; }
+  .page-tab-btn.active { color: #fff; background: #7c4fd6; }
+
+  .page-panel { display: none; }
+  .page-panel.active { display: block; }
+
+  .glossary-heading {
+    scroll-margin-top: 74px;
+    font-size: 20px;
+    color: #c9a8f5;
+    margin: 0 0 10px 0;
+  }
+
+  .builder-header { margin-bottom: 8px; }
+  .builder-title { font-size: 24px; margin: 0 0 4px 0; color: #f0ecf9; }
+
+  /* Character builder */
+  .cb-section { margin-top: 34px; padding-top: 24px; border-top: 1px solid #262030; }
+  .cb-block { margin-bottom: 22px; }
+  .cb-block-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #c9a8f5;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .cb-hint {
+    font-size: 11.5px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    color: #746c88;
+    display: inline-block;
+    margin-left: 4px;
+  }
+  .cb-input {
+    padding: 7px 10px;
+    border-radius: 7px;
+    border: 1px solid #3a3348;
+    background: #16131c;
+    color: #e8e4f0;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .cb-input:focus { outline: none; border-color: #7c4fd6; }
+  .cb-input-wide { width: 100%; max-width: 420px; }
+  .cb-input-narrow { width: 60px; }
+  .cb-mini-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #9891a8;
+  }
+  .cb-vitals-grid, .cb-stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .cb-vitals-grid .cb-input, .cb-stats-grid .cb-input { width: 100px; }
+  .cb-bg-grid {
+    display: grid;
+    grid-template-columns: minmax(160px, 260px) 70px;
+    gap: 10px 12px;
+    align-items: end;
+    max-width: 420px;
+  }
+  .cb-skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    max-width: 720px;
+  }
+  .cb-skills-grid .cb-input { width: 100%; }
+
+  .cb-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .cb-row { display: flex; gap: 8px; align-items: center; }
+  .cb-row .cb-input-name { flex: 1; max-width: 320px; }
+  .cb-row .cb-input-num { width: 70px; }
+  .cb-row-remove {
+    border: none;
+    background: transparent;
+    color: #746c88;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+  }
+  .cb-row-remove:hover { color: #fca5a5; }
+
+  .cb-add-btn, .cb-export-btn, .cb-copy-btn {
+    padding: 7px 16px;
+    border-radius: 7px;
+    border: 1px solid #3a3348;
+    background: #16131c;
+    color: #c9a8f5;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .cb-add-btn:hover, .cb-copy-btn:hover { background: #221c2c; border-color: #a887e0; }
+  .cb-export-btn {
+    background: #7c4fd6;
+    border-color: #7c4fd6;
+    color: #fff;
+    font-size: 13.5px;
+    padding: 10px 22px;
+    margin-top: 6px;
+  }
+  .cb-export-btn:hover { background: #6a3fc0; }
+
+  .cb-talent-search-wrap { position: relative; max-width: 420px; margin-bottom: 10px; }
+  .cb-suggestions {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 260px;
+    overflow-y: auto;
+    background: #16131c;
+    border: 1px solid #3a3348;
+    border-radius: 8px;
+    z-index: 5;
+  }
+  .cb-suggestions.open { display: block; }
+  .cb-suggestion-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: #e8e4f0;
+    border-bottom: 1px solid #221c2c;
+  }
+  .cb-suggestion-row:last-child { border-bottom: none; }
+  .cb-suggestion-row:hover { background: #221c2c; }
+  .cb-suggestion-name { flex: 1; font-weight: 600; }
+
+  .cb-talent-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .cb-talent-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 6px 5px 12px;
+    border-radius: 999px;
+    background: rgba(124,79,214,0.18);
+    border: 1px solid #3a3348;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #d8c4f5;
+  }
+  .cb-chip-remove {
+    border: none;
+    background: transparent;
+    color: #b4a8cc;
+    font-size: 15px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 4px;
+  }
+  .cb-chip-remove:hover { color: #fca5a5; }
+
+  .cb-export-output { margin-top: 16px; max-width: 640px; }
+  .cb-export-textarea {
+    width: 100%;
+    height: 220px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #262030;
+    background: #0d0c11;
+    color: #cbd5e1;
+    font-family: Consolas, Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    resize: vertical;
+  }
+
   .rb-wrap { max-width: 880px; margin: 0 auto 40px auto; }
 
   .rb-nav {
     position: sticky;
-    top: 0;
+    top: 49px;
     background: #0a0910;
     z-index: 10;
     padding: 10px 0 12px 0;
@@ -410,6 +616,13 @@
 </head>
 <body>
 
+<div class="page-tabs">
+  <button class="page-tab-btn active" data-page="rulebook">Rulebook</button>
+  <button class="page-tab-btn" data-page="builder">Builder</button>
+</div>
+
+<div class="page-panel active" id="page-rulebook">
+
 <div class="rb-wrap">
   <div class="rb-nav">
     <div class="rb-nav-title">Gay Dungeoneers Rulebook</div>
@@ -426,7 +639,6 @@
       <a href="#9-talents-leveling">9. Talents & Leveling</a>
       <a href="#10-dungeon-runs">10. Dungeon Runs</a>
       <a href="#11-glossary">11. Glossary</a>
-      <a href="#level-up-simulator">Level-Up Simulator</a>
     </div>
   </div>
   <div class="rb-content">
@@ -511,6 +723,7 @@
 <p>Meeting or beating that number is a hit; falling short deals no damage.</p>
 <p>On a hit, check the margin. Every full <strong>+10</strong> of margin grants one <strong>critical tier</strong>, uncapped.</p>
 <p>Each critical tier multiplies your damage dice: total dice = base dice × (critical tiers + 1). A base 2d10 attack becomes 4d10 at one tier, 6d10 at two, and so on.</p>
+<p>Attacking repeatedly wears you down. Starting with your second attack in a round, each attack takes a cumulative <strong>Fatigue</strong> penalty of -1 (second attack -1, third -2, and so on). Fatigue resets at the start of each round.</p>
 <h3 id="create-an-advantage">Create an Advantage</h3>
 <p>Narrate what you're trying to create — a bonus for yourself or an ally, or a weakness on an enemy. The DM sets a DC based on the difficulty. Meet or beat it to succeed.</p>
 <p>Success grants at least 1 <strong>success tier</strong> for clearing the DC, plus one more per full <strong>+4</strong> of margin, uncapped. The tier is the strength of what you made — a roll of 12 against a DC of 8 (margin 4) creates something at +2, whether that's a +2 bonus for an ally or a -2 weakness on an enemy.</p>
@@ -521,7 +734,7 @@
 <h3 id="react">React</h3>
 <p>Reactions respond to another combatant's action and are the one part of the action economy that doesn't escalate.</p>
 <p><strong>Defend.</strong> Build a defense pool against an incoming attack as normal. Costs 1 AP flat — consecutive defends never cost more.</p>
-<p>Out of AP when you need to defend? You become <strong>Overwhelmed</strong>: you can still defend, but take a cumulative -2 penalty for each consecutive attack you defend against with no AP left.</p>
+<p>Out of AP when you need to defend? You become <strong>Overwhelmed</strong>: you can still defend, but take a cumulative -3 penalty for each consecutive attack you defend against with no AP left.</p>
 <p><strong>Concede.</strong> Let the attack land outright instead of defending. It auto-hits but costs no AP. Since there's no DC to beat, there's no margin — the hit can never crit. Against a small attack, conceding to bank AP is often the smarter play.</p>
 <p><strong>Intercept.</strong> Take a hit meant for an ally. You roll your <em>own</em> defense pool, built around how you narrate the intercept — blocking with a shield might be Physical + Endure — and the attacker's roll is measured against your total instead of your ally's. Only you roll, and only you spend AP.</p>
 <p>Required proximity depends on the narration: shoving in with a shield means being adjacent; deflecting an arrow from across the room doesn't. The DM judges plausibility.</p>
@@ -569,8 +782,9 @@
   </div>
 </div>
 
-<div class="glossary-section-wrap">
-<h2 id="11-glossary" style="scroll-margin-top:74px; font-size:20px; color:#c9a8f5; margin:0 0 10px 0;">11. Glossary</h2>
+
+<div class="glossary-section-wrap" id="glossary-section-wrap">
+<h2 id="11-glossary" class="glossary-heading">11. Glossary</h2>
 <div class="subtitle">Talents and status effects — sortable, filterable, always current with descriptions.json.</div>
 
 <div class="tabs">
@@ -608,7 +822,17 @@
   <div class="grid-wrap" id="effect-grid"></div>
 </div>
 
-<div class="sim-section" id="level-up-simulator" style="scroll-margin-top:74px;">
+</div>
+</div>
+
+<div class="page-panel" id="page-builder">
+
+<div class="builder-header">
+  <h1 class="builder-title">Builder</h1>
+  <div class="subtitle">Roll a mock level-up, or build a character sheet from scratch and export it as JSON.</div>
+</div>
+
+<div class="sim-section" id="level-up-simulator" style="border-top:none; margin-top:0; padding-top:0; scroll-margin-top:74px;">
   <h3 class="sim-heading">Level-Up Simulator</h3>
   <div class="sim-subtitle">Mirrors what <code>!lvlup</code> actually rolls: HP/MP gains plus 3 talent options, weighted 5% legendary / 15% rare / 80% common per pick.</div>
   <div class="sim-buttons">
@@ -618,6 +842,82 @@
     <button class="sim-btn sim-btn-surprise" data-role="">Surprise Me</button>
   </div>
   <div id="sim-result"></div>
+</div>
+
+<div class="cb-section" id="character-builder">
+  <h3 class="sim-heading">Create Your Character</h3>
+  <div class="sim-subtitle">Builds a character sheet in the same shape the bot stores. Adding a talent automatically applies whatever it grants.</div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Name</div>
+    <input type="text" id="cb-name" class="cb-input cb-input-wide" placeholder="Character name">
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Level / Vitals</div>
+    <div class="cb-vitals-grid">
+      <label class="cb-mini-field">Level<input type="number" id="cb-level" class="cb-input" value="1"></label>
+      <label class="cb-mini-field">Max HP<input type="number" id="cb-hp-max" class="cb-input" value="0"></label>
+      <label class="cb-mini-field">Max MP<input type="number" id="cb-mp-max" class="cb-input" value="0"></label>
+    </div>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Background Bonuses <span class="cb-hint">(always +1 per the rules, but editable)</span></div>
+    <div class="cb-bg-grid">
+      <label class="cb-mini-field">Race<input type="text" id="cb-bg-race-name" class="cb-input" placeholder="e.g. Ratman"></label>
+      <input type="number" id="cb-bg-race-val" class="cb-input cb-input-narrow" value="1">
+      <label class="cb-mini-field">Occupation<input type="text" id="cb-bg-occ-name" class="cb-input" placeholder="e.g. Bodyguard"></label>
+      <input type="number" id="cb-bg-occ-val" class="cb-input cb-input-narrow" value="1">
+      <label class="cb-mini-field">Affiliation<input type="text" id="cb-bg-aff-name" class="cb-input" placeholder="e.g. The Vigilant Lioness"></label>
+      <input type="number" id="cb-bg-aff-val" class="cb-input cb-input-narrow" value="1">
+    </div>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Stats</div>
+    <div class="cb-stats-grid">
+      <label class="cb-mini-field">Physical<input type="number" id="cb-stat-physical" class="cb-input" value="0"></label>
+      <label class="cb-mini-field">Mental<input type="number" id="cb-stat-mental" class="cb-input" value="0"></label>
+      <label class="cb-mini-field">Social<input type="number" id="cb-stat-social" class="cb-input" value="0"></label>
+    </div>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Skills</div>
+    <div class="cb-skills-grid" id="cb-skills-grid"></div>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Extra Bonuses <span class="cb-hint">(niche specialties — talent-granted archetype bonuses land here too)</span></div>
+    <div class="cb-rows" id="cb-extra-rows"></div>
+    <button class="cb-add-btn" id="cb-add-extra">+ Add Bonus</button>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Weaknesses <span class="cb-hint">(uncapped — vices, allergies, fears, whatever fits)</span></div>
+    <div class="cb-rows" id="cb-weakness-rows"></div>
+    <button class="cb-add-btn" id="cb-add-weakness">+ Add Weakness</button>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Talents</div>
+    <div class="cb-talent-search-wrap">
+      <input type="text" id="cb-talent-search" class="cb-input cb-input-wide" placeholder="Search talents to add…" autocomplete="off">
+      <div class="cb-suggestions" id="cb-talent-suggestions"></div>
+    </div>
+    <div class="cb-talent-list" id="cb-talent-list"></div>
+    <div class="cb-hint" id="cb-ability-note" style="margin-top:8px;">Abilities granted so far: <span id="cb-ability-list">None yet — granted automatically by certain talents.</span></div>
+  </div>
+
+  <button class="cb-export-btn" id="cb-export-btn">Export Character</button>
+
+  <div class="cb-export-output" id="cb-export-output" style="display:none;">
+    <textarea id="cb-export-textarea" class="cb-export-textarea" readonly spellcheck="false"></textarea>
+    <button class="cb-copy-btn" id="cb-copy-btn">Copy JSON</button>
+  </div>
+</div>
+
 </div>
 
 <script>
@@ -683,7 +983,7 @@ const TALENTS = [
   {name:"Cleansing Heal", category:"Support", rarity:"Rare", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Your heals can reduce a chosen weakness by up to your Cleric."},
   {name:"Nurturing", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Your heals grant Nurtured (Morale) equal to Cleric."},
   {name:"Empowering", category:"Support", rarity:"Common", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Your heals grant Empowered (Bolster) equal to Bard."},
-  {name:"Blood Pact", category:"Support", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. While you have no mana, you may spend hit points to cast spells instead."},
+  {name:"Blood Pact", category:"General", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. While you have no mana, you may spend hit points to cast spells instead."},
   {name:"Terror", category:"Damage", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you deal damage, all enemies gain Terror (Agony) equal to Warlock."},
   {name:"Vengeful", category:"Tank", rarity:"Common", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Whenever you take damage, all enemies gain Spite (Agony) equal to Warlock."},
   {name:"Vessel", category:"General", rarity:"Legendary", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you kill a creature, add +1 to a random stat."},
@@ -742,6 +1042,80 @@ const EFFECTS = [
   {name:"Inspiration", category:"Bonus", desc:"Reroll your next roll once, then reduce the parent modifier by 1, ending once it reaches 0."},
   {name:"Regeneration", category:"Bonus", desc:"Heal 1 hit point at the start of each round, and reduce the parent modifier by 1."}
 ];
+
+// What each talent automatically grants when picked, straight from descriptions.json's
+// "grants" field. Talents not listed here either grant nothing mechanical or require a
+// player choice (Skill Bonus / Stat Bonus / Favored — handled separately below).
+const TALENT_GRANTS = {
+  "Pursuit": {"extra_bonuses": {"Hunter": 1}},
+  "Bramble": {"extra_bonuses": {"Druid": 1}},
+  "Rage": {"extra_bonuses": {"Rampager": 1}},
+  "Sneak Attack": {"extra_bonuses": {"Thief": 1}},
+  "Stance of the White Snake": {"extra_bonuses": {"Martial Artist": 1}, "abilities": ["Snakebite"]},
+  "Stance of the Azure Crane": {"extra_bonuses": {"Martial Artist": 1}},
+  "Stance of the Iron Ox": {"extra_bonuses": {"Martial Artist": 1}},
+  "Stance of the Crimson Mantis": {"extra_bonuses": {"Martial Artist": 1}, "abilities": ["Thousand Needles"]},
+  "Jack of All Trades": {"extra_bonuses": {"Bard": 1}},
+  "Mercy Killer": {"extra_bonuses": {"Cleric": 1}},
+  "Coupé": {"extra_bonuses": {"Duelist": 1}},
+  "Overwhelm": {"extra_bonuses": {"Rampager": 1}},
+  "Tough": {"extra_bonuses": {"Knight": 1}},
+  "Immovable": {"extra_bonuses": {"Knight": 1}},
+  "Aura of Devotion": {"extra_bonuses": {"Knight": 1}},
+  "Aura of Serenity": {"extra_bonuses": {"Cleric": 1}},
+  "En Garde": {"extra_bonuses": {"Duelist": 1}},
+  "Riposte": {"extra_bonuses": {"Duelist": 1}},
+  "Glory": {"extra_bonuses": {"Valkyrie": 1}},
+  "Paragon": {"extra_bonuses": {"Valkyrie": 1}},
+  "Rolling Tide": {"extra_bonuses": {"Swashbuckler": 1}},
+  "Battle-Hardened": {"extra_bonuses": {"Valkyrie": 1}},
+  "Tenacity": {"extra_bonuses": {"Knight": 1}},
+  "Observant": {"extra_bonuses": {"Sharp Eye": 1}},
+  "Agile": {"extra_bonuses": {"Thief": 1}},
+  "Silver Tongue": {"extra_bonuses": {"Bard": 1}, "abilities": ["Mock"]},
+  "Heavy Swings": {"skill_bonuses": {"fight": 1}},
+  "Deadeye": {"extra_bonuses": {"Spellslinger": 1}},
+  "Pyromancer": {"extra_bonuses": {"Pyromancer": 1}},
+  "Cryomancer": {"extra_bonuses": {"Cryomancer": 1}},
+  "Geomancer": {"extra_bonuses": {"Geomancer": 1}},
+  "Shrapnel": {"extra_bonuses": {"Spellslinger": 1}},
+  "Split Shot": {"extra_bonuses": {"Spellslinger": 1}},
+  "Aggravator": {"extra_bonuses": {"Rampager": 1}},
+  "Predator": {"extra_bonuses": {"Hunter": 1}},
+  "Trophy": {"extra_bonuses": {"Hunter": 1}},
+  "Uplifting": {"extra_bonuses": {"Cleric": 1}},
+  "Pinpoint Precision": {"extra_bonuses": {"Sharp Eye": 1}},
+  "Overwatch": {"extra_bonuses": {"Sharp Eye": 1}},
+  "Compassion": {"extra_bonuses": {"Cleric": 1}},
+  "Cleansing Heal": {"extra_bonuses": {"Cleric": 1}},
+  "Nurturing": {"extra_bonuses": {"Cleric": 1}},
+  "Empowering": {"extra_bonuses": {"Bard": 1}},
+  "Blood Pact": {"extra_bonuses": {"Warlock": 1}},
+  "Terror": {"extra_bonuses": {"Warlock": 1}},
+  "Vengeful": {"extra_bonuses": {"Warlock": 1}},
+  "Vessel": {"extra_bonuses": {"Warlock": 1}},
+  "Encore": {"extra_bonuses": {"Bard": 1}, "abilities": ["Encourage"]},
+  "Inspiring": {"extra_bonuses": {"Bard": 1}, "abilities": ["Inspire"]},
+  "Spell Efficiency": {"extra_bonuses": {"Wizard": 1}, "abilities": ["Meditate"]},
+  "Clarity": {"extra_bonuses": {"Wizard": 1}, "skill_bonuses": {"focus": 1}},
+  "Replicator": {"extra_bonuses": {"Wizard": 1}, "abilities": ["Copy"]},
+  "Resonance": {"extra_bonuses": {"Bard": 1}},
+  "Healthy (Common)": {"hp_max": 2},
+  "Healthy (Rare)": {"hp_max": 5},
+  "Healthy (Legendary)": {"hp_max": 10},
+  "Fresh (Common)": {"mp_max": 2},
+  "Fresh (Rare)": {"mp_max": 5},
+  "Fresh (Legendary)": {"mp_max": 10}
+};
+
+// These talents grant a bonus the player chooses at pick time — the JSON has no fixed
+// target for them, so the builder prompts for one instead of auto-applying anything.
+const SKILL_BONUS_TALENTS = { "Skill Bonus (Common)": 1, "Skill Bonus (Rare)": 2, "Skill Bonus (Legendary)": 3 };
+const STAT_BONUS_TALENTS = { "Stat Bonus (Common)": 1, "Stat Bonus (Rare)": 2, "Stat Bonus (Legendary)": 3 };
+const FAVORED_TALENTS = ["Favored (Common)", "Favored (Rare)", "Favored (Legendary)"];
+
+const SKILL_KEYS = ["cast","endure","fight","finesse","focus","influence","know","labor","move","notice","perform","shoot","sneak","survive","throw","tinker","treat","trick"];
+const STAT_KEYS = ["physical","mental","social"];
 
 function rarityBadge(r) {
   const cls = "badge-" + r.toLowerCase();
@@ -980,7 +1354,7 @@ function renderSimResult(role, result) {
       <div class="embed-title">Simulated Level-Up — ${roleLabel}</div>
       <div class="embed-desc">HP: <strong>+${result.hpRoll}</strong> (1d10, min 5)
 MP: <strong>+${result.mpRoll}</strong> (1d6, min 4)
-Select a Talent</div>
+## Select a Talent</div>
       <div class="embed-fields">${fieldsHtml}</div>
     </div>
   `;
@@ -995,8 +1369,295 @@ document.querySelectorAll(".sim-btn").forEach(btn => {
     renderSimResult(role, result);
   });
 });
+
+// ---- Page-level tabs (Rulebook / Builder) ----
+document.querySelectorAll(".page-tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".page-tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".page-panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("page-" + btn.dataset.page).classList.add("active");
+  });
+});
+
+// ---- Character Builder ----
+// Mirrors the sheet shape the bot actually stores (see sheets.json): level, hitpoints,
+// manapoints, actionpoints, background_bonuses, stat_bonuses, skill_bonuses, item_bonuses,
+// extra_bonuses, status_effects, weaknesses, talents, abilities. Picking a talent applies
+// whatever it grants (see TALENT_GRANTS above) straight to the relevant field.
+
+let nextRowId = 1;
+let extraBonusRows = [];
+let weaknessRows = [];
+let talentRows = [];
+let abilityRows = [];
+
+function escapeAttr(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function renderSkillsGrid() {
+  const grid = document.getElementById("cb-skills-grid");
+  grid.innerHTML = SKILL_KEYS.map(k => `
+    <label class="cb-mini-field">${k.charAt(0).toUpperCase() + k.slice(1)}
+      <input type="number" id="cb-skill-${k}" class="cb-input" value="0">
+    </label>
+  `).join("");
+}
+
+function renderExtraBonuses() {
+  const c = document.getElementById("cb-extra-rows");
+  if (extraBonusRows.length === 0) {
+    c.innerHTML = `<div class="sim-placeholder">No extra bonuses yet.</div>`;
+    return;
+  }
+  c.innerHTML = "";
+  extraBonusRows.forEach(row => {
+    const div = document.createElement("div");
+    div.className = "cb-row";
+    div.innerHTML = `
+      <input type="text" class="cb-input cb-input-name" value="${escapeAttr(row.name)}" placeholder="Name">
+      <input type="number" class="cb-input cb-input-num" value="${row.value}">
+      <button class="cb-row-remove" title="Remove">×</button>
+    `;
+    div.querySelector(".cb-input-name").addEventListener("input", e => { row.name = e.target.value; });
+    div.querySelector(".cb-input-num").addEventListener("input", e => { row.value = parseInt(e.target.value) || 0; });
+    div.querySelector(".cb-row-remove").addEventListener("click", () => {
+      extraBonusRows = extraBonusRows.filter(r => r.id !== row.id);
+      renderExtraBonuses();
+    });
+    c.appendChild(div);
+  });
+}
+
+function renderWeaknesses() {
+  const c = document.getElementById("cb-weakness-rows");
+  if (weaknessRows.length === 0) {
+    c.innerHTML = `<div class="sim-placeholder">No weaknesses yet.</div>`;
+    return;
+  }
+  c.innerHTML = "";
+  weaknessRows.forEach(row => {
+    const div = document.createElement("div");
+    div.className = "cb-row";
+    div.innerHTML = `
+      <input type="text" class="cb-input cb-input-name" value="${escapeAttr(row.name)}" placeholder="Name">
+      <input type="number" class="cb-input cb-input-num" value="${row.value}">
+      <button class="cb-row-remove" title="Remove">×</button>
+    `;
+    div.querySelector(".cb-input-name").addEventListener("input", e => { row.name = e.target.value; });
+    div.querySelector(".cb-input-num").addEventListener("input", e => { row.value = parseInt(e.target.value) || 0; });
+    div.querySelector(".cb-row-remove").addEventListener("click", () => {
+      weaknessRows = weaknessRows.filter(r => r.id !== row.id);
+      renderWeaknesses();
+    });
+    c.appendChild(div);
+  });
+}
+
+function renderTalentRows() {
+  const c = document.getElementById("cb-talent-list");
+  if (talentRows.length === 0) {
+    c.innerHTML = `<div class="sim-placeholder">No talents added yet.</div>`;
+    return;
+  }
+  c.innerHTML = "";
+  talentRows.forEach(row => {
+    const chip = document.createElement("div");
+    chip.className = "cb-talent-chip";
+    chip.innerHTML = `<span>${row.name}</span><button class="cb-chip-remove" title="Remove (won't undo bonuses already granted)">×</button>`;
+    chip.querySelector(".cb-chip-remove").addEventListener("click", () => {
+      talentRows = talentRows.filter(r => r.id !== row.id);
+      renderTalentRows();
+    });
+    c.appendChild(chip);
+  });
+}
+
+function renderAbilities() {
+  const el = document.getElementById("cb-ability-list");
+  el.textContent = abilityRows.length ? abilityRows.join(", ") : "None yet — granted automatically by certain talents.";
+}
+
+function grantExtraBonus(name, amount) {
+  const existing = extraBonusRows.find(r => r.name === name);
+  if (existing) existing.value += amount;
+  else extraBonusRows.push({ id: nextRowId++, name, value: amount });
+  renderExtraBonuses();
+}
+
+function grantSkillBonus(skillKey, amount) {
+  const el = document.getElementById("cb-skill-" + skillKey);
+  if (el) el.value = (parseInt(el.value) || 0) + amount;
+}
+
+function grantStatBonus(statKey, amount) {
+  const el = document.getElementById("cb-stat-" + statKey);
+  if (el) el.value = (parseInt(el.value) || 0) + amount;
+}
+
+function grantHpMax(amount) {
+  const el = document.getElementById("cb-hp-max");
+  if (el) el.value = (parseInt(el.value) || 0) + amount;
+}
+
+function grantMpMax(amount) {
+  const el = document.getElementById("cb-mp-max");
+  if (el) el.value = (parseInt(el.value) || 0) + amount;
+}
+
+function addTalent(name, depth) {
+  depth = depth || 0;
+  if (depth > 5) return;
+
+  if (name in SKILL_BONUS_TALENTS) {
+    const amt = SKILL_BONUS_TALENTS[name];
+    const skill = prompt(`"${name}" grants +${amt} to a chosen skill. Type the skill name (e.g. Fight):`);
+    if (!skill) return;
+    const key = skill.trim().toLowerCase();
+    if (!SKILL_KEYS.includes(key)) { alert("Unknown skill: " + skill); return; }
+    talentRows.push({ id: nextRowId++, name: `${name} → ${key.charAt(0).toUpperCase() + key.slice(1)}` });
+    grantSkillBonus(key, amt);
+    renderTalentRows();
+    return;
+  }
+
+  if (name in STAT_BONUS_TALENTS) {
+    const amt = STAT_BONUS_TALENTS[name];
+    const stat = prompt(`"${name}" grants +${amt} to a chosen stat. Type Physical, Mental, or Social:`);
+    if (!stat) return;
+    const key = stat.trim().toLowerCase();
+    if (!STAT_KEYS.includes(key)) { alert("Unknown stat: " + stat); return; }
+    talentRows.push({ id: nextRowId++, name: `${name} → ${key.charAt(0).toUpperCase() + key.slice(1)}` });
+    grantStatBonus(key, amt);
+    renderTalentRows();
+    return;
+  }
+
+  if (FAVORED_TALENTS.includes(name)) {
+    const pick = prompt(`"${name}" lets you select any talent. Type its exact name:`);
+    if (!pick) return;
+    const match = TALENTS.find(t => t.name.toLowerCase() === pick.trim().toLowerCase());
+    if (!match) { alert("No talent found named: " + pick); return; }
+    talentRows.push({ id: nextRowId++, name: `${name} → ${match.name}` });
+    renderTalentRows();
+    addTalent(match.name, depth + 1);
+    return;
+  }
+
+  talentRows.push({ id: nextRowId++, name });
+  const grants = TALENT_GRANTS[name];
+  if (grants) {
+    if (grants.extra_bonuses) Object.entries(grants.extra_bonuses).forEach(([k, v]) => grantExtraBonus(k, v));
+    if (grants.skill_bonuses) Object.entries(grants.skill_bonuses).forEach(([k, v]) => grantSkillBonus(k, v));
+    if (grants.hp_max) grantHpMax(grants.hp_max);
+    if (grants.mp_max) grantMpMax(grants.mp_max);
+    if (grants.abilities) grants.abilities.forEach(a => abilityRows.push(a));
+  }
+  renderTalentRows();
+  renderAbilities();
+}
+
+const cbTalentSearch = document.getElementById("cb-talent-search");
+const cbTalentSuggestions = document.getElementById("cb-talent-suggestions");
+
+cbTalentSearch.addEventListener("input", () => {
+  const q = cbTalentSearch.value.trim().toLowerCase();
+  cbTalentSuggestions.innerHTML = "";
+  if (!q) { cbTalentSuggestions.classList.remove("open"); return; }
+  const matches = TALENTS.filter(t => t.name.toLowerCase().includes(q)).slice(0, 8);
+  if (matches.length === 0) { cbTalentSuggestions.classList.remove("open"); return; }
+  cbTalentSuggestions.classList.add("open");
+  matches.forEach(t => {
+    const row = document.createElement("div");
+    row.className = "cb-suggestion-row";
+    row.innerHTML = `<span class="cb-suggestion-name">${t.name}</span>${catBadge(t.category)}${rarityBadge(t.rarity)}`;
+    row.addEventListener("click", () => {
+      addTalent(t.name);
+      cbTalentSearch.value = "";
+      cbTalentSuggestions.innerHTML = "";
+      cbTalentSuggestions.classList.remove("open");
+    });
+    cbTalentSuggestions.appendChild(row);
+  });
+});
+
+document.addEventListener("click", e => {
+  if (!cbTalentSuggestions.contains(e.target) && e.target !== cbTalentSearch) {
+    cbTalentSuggestions.classList.remove("open");
+  }
+});
+
+document.getElementById("cb-add-extra").addEventListener("click", () => {
+  extraBonusRows.push({ id: nextRowId++, name: "", value: 1 });
+  renderExtraBonuses();
+});
+
+document.getElementById("cb-add-weakness").addEventListener("click", () => {
+  weaknessRows.push({ id: nextRowId++, name: "", value: -1 });
+  renderWeaknesses();
+});
+
+document.getElementById("cb-export-btn").addEventListener("click", () => {
+  const name = document.getElementById("cb-name").value.trim() || "Unnamed";
+  const bg = {
+    race: { [document.getElementById("cb-bg-race-name").value.trim() || "Unknown"]: parseInt(document.getElementById("cb-bg-race-val").value) || 0 },
+    occupation: { [document.getElementById("cb-bg-occ-name").value.trim() || "Unknown"]: parseInt(document.getElementById("cb-bg-occ-val").value) || 0 },
+    affiliation: { [document.getElementById("cb-bg-aff-name").value.trim() || "Unknown"]: parseInt(document.getElementById("cb-bg-aff-val").value) || 0 }
+  };
+  const stats = {};
+  STAT_KEYS.forEach(k => { stats[k] = parseInt(document.getElementById("cb-stat-" + k).value) || 0; });
+  const skills = {};
+  SKILL_KEYS.forEach(k => { skills[k] = parseInt(document.getElementById("cb-skill-" + k).value) || 0; });
+  const extra = {};
+  extraBonusRows.forEach(r => { const n = r.name.trim(); if (n) extra[n] = (extra[n] || 0) + (r.value || 0); });
+  const weak = {};
+  weaknessRows.forEach(r => { const n = r.name.trim(); if (n) weak[n] = (weak[n] || 0) + (r.value || 0); });
+  const level = parseInt(document.getElementById("cb-level").value) || 1;
+  const hpMax = parseInt(document.getElementById("cb-hp-max").value) || 0;
+  const mpMax = parseInt(document.getElementById("cb-mp-max").value) || 0;
+
+  const sheet = {
+    level,
+    hitpoints: { current: hpMax, max: hpMax },
+    manapoints: { current: mpMax, max: mpMax },
+    actionpoints: { current: 3, max: 3 },
+    background_bonuses: bg,
+    stat_bonuses: stats,
+    skill_bonuses: skills,
+    item_bonuses: {},
+    extra_bonuses: extra,
+    status_effects: {},
+    weaknesses: weak,
+    talents: talentRows.map(r => r.name),
+    abilities: [...abilityRows]
+  };
+
+  const json = JSON.stringify({ [name]: sheet }, null, 2);
+  document.getElementById("cb-export-textarea").value = json;
+  const outputBox = document.getElementById("cb-export-output");
+  outputBox.style.display = "block";
+  outputBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+
+document.getElementById("cb-copy-btn").addEventListener("click", () => {
+  const textarea = document.getElementById("cb-export-textarea");
+  textarea.select();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(textarea.value).catch(() => {});
+  }
+  const btn = document.getElementById("cb-copy-btn");
+  const orig = btn.textContent;
+  btn.textContent = "Copied!";
+  setTimeout(() => { btn.textContent = orig; }, 1200);
+});
+
+renderSkillsGrid();
+renderExtraBonuses();
+renderWeaknesses();
+renderTalentRows();
+renderAbilities();
 </script>
 
-</div>
 </body>
 </html>
