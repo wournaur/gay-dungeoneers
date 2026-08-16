@@ -950,7 +950,7 @@ function renderSimResult(role, result) {
       <div class="embed-title">Simulated Level-Up — ${roleLabel}</div>
       <div class="embed-desc">HP: <strong>+${result.hpRoll}</strong> (1d10, min 5)
 MP: <strong>+${result.mpRoll}</strong> (1d6, min 4)
-## Select a Talent</div>
+Select a Talent</div>
       <div class="embed-fields">${fieldsHtml}</div>
     </div>
   `;
