@@ -655,6 +655,7 @@
 
 <div class="page-tabs">
   <button class="page-tab-btn active" data-page="rulebook">Rulebook</button>
+  <button class="page-tab-btn" data-page="glossary">Glossary</button>
   <button class="page-tab-btn" data-page="builder">Builder</button>
 </div>
 
@@ -675,7 +676,6 @@
       <a href="#8-party-groups-roles">8. Party, Groups & Roles</a>
       <a href="#9-talents-leveling">9. Talents & Leveling</a>
       <a href="#10-dungeon-runs">10. Dungeon Runs</a>
-      <a href="#11-glossary">11. Glossary</a>
     </div>
   </div>
   <div class="rb-content">
@@ -813,16 +813,22 @@
 <p>Defeating the boss grants your whole group a random-sized <strong>wishbox</strong>.</p>
 <p>If your group's shared HP pool hits 0, that's permadeath — roll new characters.</p>
 <p>If you don't think you can survive the next room, you can <strong>escape</strong> instead. That's always an option, but it wipes your progress entirely: level resets to 1, and you lose every talent from the run.</p>
-<p>The only progression that survives between runs happens during <strong>downtime sessions</strong> outside the dungeon, where you can learn new skills or abilities, or buy items for your next attempt.</p>
-<hr class="rb-hr">
 
   </div>
 </div>
 
+</div>
+
+<div class="page-panel" id="page-glossary">
+
+<div class="rb-wrap">
+  <div class="rb-nav">
+    <div class="rb-nav-title">Gay Dungeoneers Glossary</div>
+  </div>
+
+  <div class="subtitle" style="margin: 4px 0 0 0;">Talents and status effects — sortable, filterable, always current with descriptions.json.</div>
 
 <div class="glossary-section-wrap" id="glossary-section-wrap">
-<h2 id="11-glossary" class="glossary-heading">11. Glossary</h2>
-<div class="subtitle">Talents and status effects — sortable, filterable, always current with descriptions.json.</div>
 
 <div class="tabs">
   <button class="tab-btn active" data-tab="talents">Talents</button>
@@ -859,6 +865,7 @@
   <div class="grid-wrap" id="effect-grid"></div>
 </div>
 
+</div>
 </div>
 </div>
 
@@ -967,93 +974,94 @@
 
 <script>
 const TALENTS = [
-  {name:"Lethal Strike", category:"Damage", rarity:"Common", archetype:"", stacks:"", desc:"On a critical hit, apply Bleeding (Bleed)."},
-  {name:"Fire Resistance", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Fire-based attacks against you are halved."},
-  {name:"Deflecting", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Ranged attacks against you are redirected to a random opponent instead."},
-  {name:"Oil and Water", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"While you are on a yellow tile, you deal double damage to Ying and half damage to Yan. While you are on a blue tile, you deal double damage to Yan and half damage to Ying."},
-  {name:"Gnash", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Your attacks deal no direct damage. Instead, the target gains Agony equal to the damage you would have dealt."},
-  {name:"Fiery Touch", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you deal or take damage from a melee attack (using Fight), the other creature gains Burning (Burn)."},
+  {name:"Aggravator", category:"Damage", rarity:"Common", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Whenever you miss with an attack, gain Aggravated (Bolster)."},
+  {name:"Agile", category:"General", rarity:"Common", archetype:"Thief", stacks:"", desc:"Gain 1 Thief. You may reroll Move checks made using Thief once."},
+  {name:"Aura of Devotion", category:"Tank", rarity:"Rare", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Allies next to you take reduced damage equal to Knight."},
+  {name:"Aura of Serenity", category:"Support", rarity:"Rare", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Allies next to you reduce incoming weaknesses by 1 for every 2 Cleric."},
   {name:"Barkskin", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Physical damage you take is halved. Fire sources deal double damage to you instead."},
-  {name:"Salamander", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"You are immune to fire-based damage. Cold attacks deal double damage to you instead."},
-  {name:"Pursuit", category:"Damage", rarity:"Rare", archetype:"Hunter", stacks:"", desc:"Gain 1 Hunter. Whenever you hit with an attack, apply Deep Wounds (Wounded)."},
-  {name:"Tormentor", category:"Damage", rarity:"Rare", archetype:"", stacks:"", desc:"Your attack damage is halved, but the target gains Torment (Agony) equal to the damage you would have dealt before the halving."},
+  {name:"Battle-Hardened", category:"Tank", rarity:"Rare", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. Whenever you're critically hit, reduce the attack's critical tier by 1 for every 2 Valkyrie."},
+  {name:"Blitz", category:"Damage", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you kill a creature with an attack, refund all Action Points spent on that attack."},
+  {name:"Blood Pact", category:"General", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. While you have no mana, you may spend hit points to cast spells instead."},
   {name:"Bramble", category:"Tank", rarity:"Common", archetype:"Druid", stacks:"", desc:"Gain 1 Druid. Whenever you take damage from an attack, your attacker takes damage equal to Druid."},
-  {name:"Rage", category:"Tank", rarity:"Common", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Whenever you take damage, halve it and add the other half to Enraged. Add Enraged to your next attack, then remove it. If the halved damage would push Enraged past the threshold (10, +2 per Rampager), it bursts instead: take extra damage equal to Enraged, then remove it."},
-  {name:"Sneak Attack", category:"Damage", rarity:"Rare", archetype:"Thief", stacks:"", desc:"Gain 1 Thief. While hidden, your next attack gains a critical tier equal to Thief."},
-  {name:"Stance of the White Snake", category:"Damage", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist and the Snakebite ability. Reduce your critical tier threshold by 1 for every 2 Martial Artist."},
-  {name:"Stance of the Azure Crane", category:"Tank", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist. Attacks against you increase their critical tier threshold by 1 for every 2 Martial Artist."},
-  {name:"Stance of the Iron Ox", category:"Tank", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist. Take halved damage, and gain Grit (Agony) equal to half of the damage you took."},
-  {name:"Stance of the Crimson Mantis", category:"Tank", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist and the Thousand Needles ability. Your counterattacks only cost 1 Action Point."},
-  {name:"Memento Vivere", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Whenever you roll a natural 1, gain Memento Vivere. At 2 stacks, your next natural 1 becomes a natural 20, then remove all Memento Vivere."},
+  {name:"Clarity", category:"General", rarity:"Common", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and 1 Focus. You may reroll Focus checks made using Wizard once."},
+  {name:"Cleansing Heal", category:"Support", rarity:"Rare", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Your heals can reduce a chosen weakness by up to your Cleric."},
+  {name:"Compassion", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you restore hit points, increase the healing by Cleric."},
+  {name:"Coupé", category:"Damage", rarity:"Rare", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. Deal bonus damage equal to Duelist for each weakness the target has in their defense roll."},
+  {name:"Cryomancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 3", desc:"Gain 1 Cryomancer and the following abilities for each point:\n1 — Icicle, Freeze\n2 — Cold Touch, Snowstorm\n3 — Shatter, Frozen Tomb"},
+  {name:"Deadeye", category:"Damage", rarity:"Rare", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. At the start of each round, you have a 10% chance to gain Tumbleweed (Precision), +5% for each Spellslinger. If you made no rolls last round, add another 20%."},
+  {name:"Deflecting", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Ranged attacks against you are redirected to a random opponent instead."},
+  {name:"Empowering", category:"Support", rarity:"Common", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Your heals grant Empowered (Bolster) equal to Bard."},
+  {name:"En Garde", category:"Tank", rarity:"Common", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. While wielding a one-handed sword, reduce damage from a non-critical hit by rolling your weapon die."},
+  {name:"Encore", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Encourage ability. Whenever anyone in your group lands a critical hit using Morale, restore mana equal to that attack's critical tier."},
+  {name:"Favored (Common)", category:"General", rarity:"Common", archetype:"", stacks:"", desc:"Select a talent of your choice up to Common."},
+  {name:"Favored (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Select a talent of your choice up to Legendary."},
+  {name:"Favored (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"", desc:"Select a talent of your choice up to Rare."},
+  {name:"Fiery Touch", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you deal or take damage from a melee attack (using Fight), the other creature gains Burning (Burn)."},
+  {name:"Fire Resistance", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Fire-based attacks against you are halved."},
+  {name:"Fresh (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +2 MP."},
+  {name:"Fresh (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +10 MP."},
+  {name:"Fresh (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +5 MP."},
+  {name:"Geomancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 3", desc:"Gain 1 Geomancer and the following abilities for each point:\n1 — Earth Disc, Earth Armor\n2 — Wall of Earth, Move Earth\n3 — Earth Grasp, Earthquake"},
+  {name:"Glory", category:"Tank", rarity:"Rare", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. The first time you'd be reduced to 0 hit points each combat, restore hit points equal to Valkyrie instead."},
+  {name:"Gnash", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Your attacks deal no direct damage. Instead, the target gains Agony equal to the damage you would have dealt."},
+  {name:"Healthy (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +2 HP."},
+  {name:"Healthy (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +10 HP."},
+  {name:"Healthy (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +5 HP."},
+  {name:"Heavy Swings", category:"Damage", rarity:"Common", archetype:"", stacks:"", desc:"Gain 1 Fight. Melee attacks apply your Fight modifier to damage instead of the attack roll."},
+  {name:"Helping Hand", category:"Support", rarity:"Common", archetype:"", stacks:"", desc:"When you help someone, grant them Inspired (Inspiration)."},
+  {name:"Immovable", category:"Tank", rarity:"Common", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Reduce damage you take from damage-per-round effects by Knight."},
+  {name:"Inspiring", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Inspire ability."},
   {name:"Jack of All Trades", category:"General", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Your d20 rolls can't go below 10, success tiers can't exceed 2, and critical tiers can't exceed 1."},
   {name:"Jackpot", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Replace your d20 rolls with 3d6. Rolling three of a kind grants a Jackpot based on the matching value:\n111 — +1 success tier\n222 — +2 success tiers, +1 critical tier\n333 — +3 success tiers, +2 critical tiers\n444 — +4 success tiers, +3 critical tiers\n555 — +5 success tiers, +4 critical tiers\n666 — +6 success tiers, +5 critical tiers"},
-  {name:"Opportunist", category:"Damage", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you hit a target with a weakness in its defense pool, that attack gains 1 critical tier."},
-  {name:"Blitz", category:"Damage", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you kill a creature with an attack, refund all Action Points spent on that attack."},
-  {name:"Mercy Killer", category:"Damage", rarity:"Legendary", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you land a critical hit on a creature with Agony, consume all of its Agony and add it to that attack's damage. If your attack leaves a target at or below 5% hit points, execute it instead. This threshold increases by 1% for each Cleric."},
-  {name:"Coupé", category:"Damage", rarity:"Rare", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. Deal bonus damage equal to Duelist for each weakness the target has in their defense roll."},
-  {name:"Overwhelm", category:"Damage", rarity:"Rare", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Your attacks can't gain critical tiers. Convert each point above the DC into direct damage instead."},
-  {name:"Tough", category:"Tank", rarity:"Common", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Reduce all damage taken from attacks by Knight."},
-  {name:"Immovable", category:"Tank", rarity:"Common", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Reduce damage you take from damage-per-round effects by Knight."},
-  {name:"Aura of Devotion", category:"Tank", rarity:"Rare", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Allies next to you take reduced damage equal to Knight."},
-  {name:"Aura of Serenity", category:"Support", rarity:"Rare", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Allies next to you reduce incoming weaknesses equal to Cleric."},
-  {name:"En Garde", category:"Tank", rarity:"Common", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. While wielding a one-handed sword, reduce damage from a non-critical hit by rolling your weapon die."},
-  {name:"Riposte", category:"Tank", rarity:"Rare", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. Whenever a creature misses you with a melee attack, make a melee attack against it using your defense roll and equipped one-handed weapon."},
-  {name:"Glory", category:"Tank", rarity:"Rare", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. The first time you'd be reduced to 0 hit points each combat, restore hit points equal to Valkyrie instead."},
-  {name:"Paragon", category:"Tank", rarity:"Common", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. Whenever you successfully intercept an attack for an ally, that ally gains Rallied (Morale) equal to Valkyrie."},
-  {name:"Rolling Tide", category:"Tank", rarity:"Common", archetype:"Swashbuckler", stacks:"", desc:"Gain 1 Swashbuckler. Whenever you dodge an attack using Move, gain Sway (Morale) equal to Swashbuckler."},
-  {name:"Battle-Hardened", category:"Tank", rarity:"Rare", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. Whenever you're critically hit, reduce the attack's critical tier by 1 for every 2 Valkyrie."},
-  {name:"Tenacity", category:"Tank", rarity:"Rare", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Whenever you gain a weakness, reduce its modifier by Knight."},
+  {name:"Lethal Strike", category:"Damage", rarity:"Common", archetype:"", stacks:"", desc:"On a critical hit, apply Bleeding (Bleed)."},
+  {name:"Masochistic", category:"Tank", rarity:"Common", archetype:"", stacks:"", desc:"Reduce damage you take by 1 for each weakness in your defense pool."},
+  {name:"Memento Vivere", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Whenever you roll a natural 1, gain Memento Vivere. At 2 stacks, your next natural 1 becomes a natural 20, then remove all Memento Vivere."},
+  {name:"Mercy Killer", category:"Damage", rarity:"Legendary", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you land a critical hit on a creature with Agony, consume all of its Agony and add it to that attack's damage. If your attack leaves a target at or below 10% hit points (+1% per Cleric), execute it instead."},
+  {name:"Nurturing", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Your heals grant Nurtured (Morale) equal to Cleric."},
   {name:"Observant", category:"Support", rarity:"Common", archetype:"Sharp Eye", stacks:"", desc:"Gain 1 Sharp Eye. You may reroll Notice checks made using Sharp Eye once."},
-  {name:"Agile", category:"General", rarity:"Common", archetype:"Thief", stacks:"", desc:"Gain 1 Thief. You may reroll Move checks made using Thief once."},
-  {name:"Silver Tongue", category:"Support", rarity:"Common", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Mock ability. You may reroll Influence or Trick checks made using Bard once."},
-  {name:"Heavy Swings", category:"Damage", rarity:"Common", archetype:"", stacks:"", desc:"Gain 1 Fight. Melee attacks apply your Fight modifier to damage instead of the attack roll."},
-  {name:"Deadeye", category:"Damage", rarity:"Rare", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. At the start of each round, you have a 10% chance to gain Tumbleweed (Precision), +5% for each Spellslinger. If you made no rolls last round, add another 20%."},
-  {name:"Pyromancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 4", desc:"Gain 1 Pyromancer and the following abilities for each point:\n1 — Flame Bolt, Flame Ward\n2 — Siphon Warmth, Flame Pillar\n3 — Heat Ray, Wall of Fire\n4 — Armageddon, Incinerate"},
-  {name:"Cryomancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 3", desc:"Gain 1 Cryomancer and the following abilities for each point:\n1 — Icicle, Freeze\n2 — Cold Touch, Snowstorm\n3 — Shatter, Frozen Tomb"},
-  {name:"Geomancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 3", desc:"Gain 1 Geomancer and the following abilities for each point:\n1 — Earth Disc, Earth Armor\n2 — Wall of Earth, Move Earth\n3 — Earth Grasp, Earthquake"},
-  {name:"Shrapnel", category:"Damage", rarity:"Common", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. Whenever you deal ranged damage, apply Shrapnel (Agony) with a modifier equal to Spellslinger."},
-  {name:"Split Shot", category:"Damage", rarity:"Common", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. While there are at least two enemies, your ranged damage is halved and the other half deals damage to a random enemy."},
-  {name:"Aggravator", category:"Damage", rarity:"Common", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Whenever you miss with an attack, gain Aggravated (Bolster)."},
+  {name:"Oil and Water", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"On a yellow tile, deal double damage to Ying and half to Yan; on a blue tile, the reverse."},
+  {name:"Opportunist", category:"Damage", rarity:"Rare", archetype:"Sharp Eye", stacks:"", desc:"Gain 1 Sharp Eye. Whenever you hit a target with a weakness in its defense pool, reduce your critical tier threshold by Sharp Eye."},
+  {name:"Overwatch", category:"Support", rarity:"Rare", archetype:"Sharp Eye", stacks:"", desc:"Gain 1 Sharp Eye. Your group gains a bonus to their defense rolls equal to your Notice skill."},
+  {name:"Overwhelm", category:"Damage", rarity:"Rare", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Your attacks can't gain critical tiers. Convert each point above the DC into direct damage instead."},
+  {name:"Paragon", category:"Tank", rarity:"Common", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. Whenever you successfully intercept an attack for an ally, that ally gains Rallied (Morale) equal to Valkyrie."},
+  {name:"Pinpoint Precision", category:"Support", rarity:"Common", archetype:"Sharp Eye", stacks:"", desc:"Gain 1 Sharp Eye. Whenever you use Sharp Eye in a Notice or Know check that creates a weakness, increase its modifier by Sharp Eye."},
   {name:"Predator", category:"Damage", rarity:"Common", archetype:"Hunter", stacks:"", desc:"Gain 1 Hunter. Gain a bonus equal to Hunter on attack rolls against injured targets, doubled if they're below half their maximum hit points."},
+  {name:"Pursuit", category:"Damage", rarity:"Rare", archetype:"Hunter", stacks:"", desc:"Gain 1 Hunter. Whenever you hit with an attack, apply Deep Wounds (Wounded)."},
+  {name:"Pyromancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 4", desc:"Gain 1 Pyromancer and the following abilities for each point:\n1 — Flame Bolt, Flame Ward\n2 — Siphon Warmth, Flame Pillar\n3 — Heat Ray, Wall of Fire\n4 — Armageddon, Incinerate"},
+  {name:"Quick Caster", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Channeling and Charging abilities skip their buildup roll entirely. Cast them straight away, as if already fully charged."},
+  {name:"Rage", category:"Tank", rarity:"Common", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Whenever you take damage, halve it and add the other half to Enraged. Add Enraged to your next attack, then remove it. If the halved damage would push Enraged past the threshold (10, +2 per Rampager), it bursts instead: take extra damage equal to Enraged, then remove it."},
+  {name:"Reliable", category:"Support", rarity:"Rare", archetype:"", stacks:"", desc:"When helping someone, double your skill modifier."},
+  {name:"Replicator", category:"General", rarity:"Rare", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and the Copy ability. The duration of the copied ability extends equal to Wizard."},
+  {name:"Resonance", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Whenever you use Bard in your pool to grant an extra bonus to an ally, a random ally also gains the effect."},
+  {name:"Riposte", category:"Tank", rarity:"Rare", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. Whenever a creature misses you with a melee attack, make a melee attack against it using your defense roll and equipped one-handed weapon."},
+  {name:"Rolling Tide", category:"Tank", rarity:"Common", archetype:"Swashbuckler", stacks:"", desc:"Gain 1 Swashbuckler. Whenever you dodge an attack using Move, gain Sway (Morale) equal to Swashbuckler."},
+  {name:"Sadistic", category:"Support", rarity:"Common", archetype:"", stacks:"", desc:"Whenever you create a weakness on an enemy, increase its modifier by 1."},
+  {name:"Salamander", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"You are immune to fire-based damage. Cold attacks deal double damage to you instead."},
+  {name:"Second Wind", category:"Tank", rarity:"Rare", archetype:"", stacks:"", desc:"Regain 1d4 hit points at the end of each combat."},
+  {name:"Shrapnel", category:"Damage", rarity:"Common", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. Whenever you deal ranged damage, apply Shrapnel (Agony) with a modifier equal to Spellslinger."},
+  {name:"Silver Tongue", category:"Support", rarity:"Common", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Mock ability. You may reroll Influence or Trick checks made using Bard once."},
+  {name:"Skill Bonus (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +1 in a chosen skill."},
+  {name:"Skill Bonus (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +3 in a chosen skill."},
+  {name:"Skill Bonus (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +2 in a chosen skill."},
+  {name:"Sneak Attack", category:"Damage", rarity:"Rare", archetype:"Thief", stacks:"", desc:"Gain 1 Thief. While hidden, your next attack gains a critical tier equal to Thief."},
+  {name:"Sole Protector", category:"Tank", rarity:"Legendary", archetype:"", stacks:"", desc:"While you have this talent, enemies can only target you with attacks."},
+  {name:"Spell Efficiency", category:"General", rarity:"Rare", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and the Meditate ability. When you cast a spell, there is a 5% chance to refund 50% of its mana cost. This chance increases by an extra 5% for each Wizard."},
+  {name:"Split Shot", category:"Damage", rarity:"Common", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. While there are at least two enemies, your ranged damage is halved and the other half deals damage to a random enemy."},
+  {name:"Stance of the Azure Crane", category:"Tank", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist. Attacks against you increase their critical tier threshold by 1 for every 2 Martial Artist."},
+  {name:"Stance of the Crimson Mantis", category:"Damage", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist and the Thousand Needles ability. Your counterattacks only cost 1 Action Point."},
+  {name:"Stance of the Iron Ox", category:"Tank", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist. Halve damage taken, and gain Grit (Agony) equal to the amount removed."},
+  {name:"Stance of the White Snake", category:"Damage", rarity:"Rare", archetype:"Martial Artist", stacks:"", desc:"Gain 1 Martial Artist and the Snakebite ability. Reduce your critical tier threshold by 1 for every 2 Martial Artist."},
+  {name:"Stat Bonus (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +1 in a chosen stat."},
+  {name:"Stat Bonus (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +3 in a chosen stat."},
+  {name:"Stat Bonus (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +2 in a chosen stat."},
+  {name:"Tenacity", category:"Tank", rarity:"Rare", archetype:"Knight", stacks:"", desc:"Gain 1 Knight and 1 Endure. Whenever you gain a weakness, reduce its modifier by 1 for every 2 Knight."},
+  {name:"Terror", category:"Damage", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you deal damage, all enemies gain Terror (Agony) equal to Warlock."},
+  {name:"Tormentor", category:"Damage", rarity:"Rare", archetype:"", stacks:"", desc:"Your attack damage is halved, but the target gains Torment (Agony) equal to what it would have dealt at full damage."},
+  {name:"Tough", category:"Tank", rarity:"Common", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Reduce all damage taken from attacks by Knight."},
   {name:"Trophy", category:"Damage", rarity:"Common", archetype:"Hunter", stacks:"", desc:"Gain 1 Hunter. Whenever you reduce a creature to 0 hit points, restore hit points equal to Hunter."},
   {name:"Uplifting", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you use Cleric in your pool to grant an extra bonus to an ally, increase it by Cleric."},
-  {name:"Pinpoint Precision", category:"Support", rarity:"Common", archetype:"Sharp Eye", stacks:"", desc:"Gain 1 Sharp Eye. Whenever you use Sharp Eye in a Notice or Know check that creates a weakness, increase its modifier by Sharp Eye."},
-  {name:"Overwatch", category:"Support", rarity:"Rare", archetype:"Sharp Eye", stacks:"", desc:"Gain 1 Sharp Eye. Your group gains a bonus to their defense rolls equal to your Notice skill."},
-  {name:"Reliable", category:"Support", rarity:"Rare", archetype:"", stacks:"", desc:"When helping someone, double your skill modifier."},
-  {name:"Helping Hand", category:"Support", rarity:"Common", archetype:"", stacks:"", desc:"When you help someone, grant them Inspired (Inspiration)."},
-  {name:"Sadistic", category:"Support", rarity:"Common", archetype:"", stacks:"", desc:"Whenever you create a weakness on an enemy, increase its modifier by 1."},
-  {name:"Masochistic", category:"Tank", rarity:"Common", archetype:"", stacks:"", desc:"Reduce damage you take by 1 for each weakness in your defense pool."},
-  {name:"Second Wind", category:"Tank", rarity:"Rare", archetype:"", stacks:"", desc:"Regain 1d4 hit points at the end of each combat."},
-  {name:"Compassion", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you restore hit points, increase the healing by Cleric."},
-  {name:"Cleansing Heal", category:"Support", rarity:"Rare", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Your heals can reduce a chosen weakness by up to your Cleric."},
-  {name:"Nurturing", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Your heals grant Nurtured (Morale) equal to Cleric."},
-  {name:"Empowering", category:"Support", rarity:"Common", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Your heals grant Empowered (Bolster) equal to Bard."},
-  {name:"Blood Pact", category:"General", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. While you have no mana, you may spend hit points to cast spells instead."},
-  {name:"Terror", category:"Damage", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you deal damage, all enemies gain Terror (Agony) equal to Warlock."},
   {name:"Vengeful", category:"Tank", rarity:"Common", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Whenever you take damage, all enemies gain Spite (Agony) equal to Warlock."},
-  {name:"Vessel", category:"General", rarity:"Legendary", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you kill a creature, add +1 to a random stat."},
-  {name:"Encore", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Encourage ability. Whenever anyone in your group lands a critical hit using Morale, restore mana equal to that attack's critical tier."},
-  {name:"Inspiring", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Inspire ability."},
-  {name:"Spell Efficiency", category:"General", rarity:"Rare", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and the Meditate ability. When you cast a spell, there is a 5% chance to refund 50% of its mana cost. This chance increases by an extra 5% for each Wizard."},
-  {name:"Clarity", category:"General", rarity:"Common", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and 1 Focus. You may reroll Focus checks made using Wizard once."},
-  {name:"Replicator", category:"General", rarity:"Rare", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and the Copy ability. The duration of the copied ability extends equal to Wizard."},
-  {name:"Quick Caster", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Channeling and Charging abilities skip their buildup roll entirely. Cast them straight away, as if already fully charged."},
-  {name:"Resonance", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Whenever you use Bard in your pool to grant an extra bonus to an ally, a random ally also gains the effect."},
-  {name:"Stat Bonus (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +1 in a chosen stat."},
-  {name:"Stat Bonus (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +2 in a chosen stat."},
-  {name:"Stat Bonus (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +3 in a chosen stat."},
-  {name:"Favored (Common)", category:"General", rarity:"Common", archetype:"", stacks:"", desc:"Select a talent of your choice up to Common."},
-  {name:"Favored (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"", desc:"Select a talent of your choice up to Rare."},
-  {name:"Favored (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Select a talent of your choice up to Legendary."},
-  {name:"Healthy (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +2 HP."},
-  {name:"Healthy (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +5 HP."},
-  {name:"Healthy (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +10 HP."},
-  {name:"Fresh (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +2 MP."},
-  {name:"Fresh (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +5 MP."},
-  {name:"Fresh (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +10 MP."},
-  {name:"Skill Bonus (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +1 in a chosen skill."},
-  {name:"Skill Bonus (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +2 in a chosen skill."},
-  {name:"Skill Bonus (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +3 in a chosen skill."}
+  {name:"Vessel", category:"General", rarity:"Legendary", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you kill a creature, add +1 to a random stat."}
 ];
 
 const EFFECTS = [
@@ -1062,7 +1070,7 @@ const EFFECTS = [
   {name:"Poison", category:"Damage Per Round", desc:"Take damage equal to Poisoned at the start of each round and apply the Poison penalty to all rolls. Poison doesn't decrease naturally."},
   {name:"Agony", category:"Damage Per Round", desc:"Take 1 damage at the start of each round, and reduce the parent modifier by 1."},
   {name:"Mana Burn", category:"Damage Per Round", desc:"Lose 1 mana at the start of each round, and reduce the parent modifier by 1."},
-  {name:"Honey Badgered", category:"Damage Per Round", desc:"Take 1d6 damage at the start of each round, and reduce all your rolls by 1d6 (rerolled each time). Get It Off Me! decreases naturally by 1 each round."},
+  {name:"Honey Badgered", category:"Damage Per Round", desc:"Take 1d6 damage at the start of each round, and reduce all your rolls by 1d6 (rerolled each time). Honey Badgered decreases naturally by 1 each round."},
   {name:"Concussion", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to rolls. Reduce the parent modifier by 1 each time it applies."},
   {name:"Restrained", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Fight, Throw, and Move rolls. Ends when the parent modifier reaches 0."},
   {name:"Disarm", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Fight, Shoot, and Throw rolls. Ends when the parent modifier reaches 0."},
@@ -1071,14 +1079,15 @@ const EFFECTS = [
   {name:"Freezing", category:"Control", desc:"Reduce the parent modifier by 1 each round. At -5 or lower, this effect becomes Frozen (Incapacitated)."},
   {name:"Demoralize", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to your next roll, then end."},
   {name:"Wounded", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Endure rolls, and increase all damage taken by the same amount. Ends when the parent modifier reaches 0."},
-  {name:"Exposed", category:"Control", desc:"The next hit you take consumes this effect and its parent modifier entirely, rolling that attack's damage dice at maximum. Decreases naturally by 1 each round."},
+  {name:"Doom", category:"Control", desc:"Whenever you take damage, if your hit points fall to the parent modifier or lower, you are executed immediately."},
+  {name:"Exposed", category:"Control", desc:"The next hits against you roll their damage dice at maximum, one die per point of the parent modifier, until it's used up. Decreases naturally by 1 each round."},
   {name:"Incapacitated", category:"Control", desc:"You cannot act on your turn."},
   {name:"Resistance", category:"Defense", desc:"Halve all incoming damage."},
   {name:"Invulnerable", category:"Defense", desc:"Take no damage."},
   {name:"Deflecting", category:"Defense", desc:"Ranged attacks against you are redirected to a random opponent of yours instead."},
-  {name:"Counter", category:"Defense", desc:"Reflect a percentage of pre-mitigation damage back to the attacker if the attack was melee."},
+  {name:"Counter", category:"Defense", desc:"If the attack was melee, reflect a percentage of pre-mitigation damage back to the attacker."},
   {name:"Warded", category:"Defense", desc:"Absorb incoming damage up to the parent modifier before it reduces your hit points."},
-  {name:"Hiding", category:"Bonus", desc:"You are hidden. Ends immediately after you attack."},
+  {name:"Hiding", category:"Bonus", desc:"You cannot be targeted until you are spotted. Ends immediately after you attack."},
   {name:"Morale", category:"Bonus", desc:"Add the parent modifier to your next roll, then end."},
   {name:"Precision", category:"Bonus", desc:"Reduce your next ranged attack's critical tier threshold by the parent modifier, then end and remove it."},
   {name:"Bolster", category:"Bonus", desc:"Add the parent modifier to the damage of your next attack, then end."},
@@ -1100,6 +1109,8 @@ const TALENT_GRANTS = {
   "Stance of the Azure Crane": {"extra_bonuses": {"Martial Artist": 1}},
   "Stance of the Iron Ox": {"extra_bonuses": {"Martial Artist": 1}},
   "Stance of the Crimson Mantis": {"extra_bonuses": {"Martial Artist": 1}, "abilities": ["Thousand Needles"]},
+  "Opportunist": {"extra_bonuses": {"Sharp Eye": 1}},
+  "Sole Protector": {},
   "Jack of All Trades": {"extra_bonuses": {"Bard": 1}},
   "Mercy Killer": {"extra_bonuses": {"Cleric": 1}},
   "Coupé": {"extra_bonuses": {"Duelist": 1}},
