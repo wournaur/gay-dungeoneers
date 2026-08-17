@@ -152,6 +152,14 @@
 
   .stack-note { font-size: 11.5px; color: #9891a8; margin-left: 4px; }
 
+  .effect-jump-link {
+    color: #b794f6;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+  .effect-jump-link:hover { color: #d8c4f5; text-decoration-style: solid; }
+
   /* gridjs overrides */
   .gridjs-wrapper { border-radius: 10px; border-color: #262030 !important; background: #121017 !important; }
   .gridjs-table { font-size: 13px; background: #121017 !important; }
@@ -333,14 +341,14 @@
   .page-panel.active { display: block; }
 
   .glossary-heading {
-    scroll-margin-top: 74px;
+    scroll-margin-top: 150px;
     font-size: 20px;
     color: #c9a8f5;
     margin: 0 0 10px 0;
   }
 
   /* Character builder */
-  .cb-section { margin-top: 34px; padding-top: 24px; border-top: 1px solid #262030; }
+  .cb-section { margin-top: 34px; padding-top: 24px; border-top: 1px solid #262030; scroll-margin-top: 150px; }
   .cb-block { margin-bottom: 22px; }
   .cb-block-label {
     font-size: 13px;
@@ -589,13 +597,13 @@
     font-size: 20px;
     color: #c9a8f5;
     margin: 30px 0 10px 0;
-    scroll-margin-top: 74px;
+    scroll-margin-top: 150px;
   }
   .rb-content h3 {
     font-size: 15.5px;
     color: #b794f6;
     margin: 20px 0 8px 0;
-    scroll-margin-top: 74px;
+    scroll-margin-top: 150px;
   }
   .rb-content p {
     font-size: 14px;
@@ -882,7 +890,7 @@
 
   <div class="subtitle" style="margin: 4px 0 0 0;">Roll a mock level-up, or build a character sheet from scratch and export it as JSON.</div>
 
-<div class="sim-section" id="level-up-simulator" style="border-top:none; margin-top:8px; padding-top:0; scroll-margin-top:74px;">
+<div class="sim-section" id="level-up-simulator" style="border-top:none; margin-top:8px; padding-top:0; scroll-margin-top:150px;">
   <h3 class="sim-heading">Level-Up Simulator</h3>
   <div class="sim-subtitle">Mirrors what <code>!lvlup</code> actually rolls: HP/MP gains plus 3 talent options, weighted 5% legendary / 15% rare / 80% common per pick.</div>
   <div class="sim-buttons">
@@ -1173,6 +1181,53 @@ const FAVORED_TALENTS = ["Favored (Common)", "Favored (Rare)", "Favored (Legenda
 const SKILL_KEYS = ["cast","endure","fight","finesse","focus","influence","know","labor","move","notice","perform","shoot","sneak","survive","throw","tinker","treat","trick"];
 const STAT_KEYS = ["physical","mental","social"];
 
+// Status-effect names that appear parenthetically inside talent/effect descriptions
+// (e.g. "gain Aggravated (Bolster)") get turned into clickable links that jump to that
+// effect's row in the Glossary tab's Status Effects table.
+const EFFECT_NAME_SET = new Set(EFFECTS.map(e => e.name));
+function linkifyEffectRefs(text) {
+  return text.replace(/\(([^)]+)\)/g, (whole, inner) => {
+    if (EFFECT_NAME_SET.has(inner)) {
+      const safe = inner.replace(/"/g, "&quot;");
+      return `(<span class="effect-jump-link" data-effect-name="${safe}">${inner}</span>)`;
+    }
+    return whole;
+  });
+}
+
+function jumpToEffect(name) {
+  document.querySelectorAll(".page-tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".page-panel").forEach(p => p.classList.remove("active"));
+  document.querySelector('.page-tab-btn[data-page="glossary"]').classList.add("active");
+  document.getElementById("page-glossary").classList.add("active");
+
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.querySelector('.tab-btn[data-tab="effects"]').classList.add("active");
+  document.getElementById("panel-effects").classList.add("active");
+
+  effectCatFilter = "All";
+  buildChips("effect-cat-chips", effectCats, effectCatFilter, effectCatClickHandler);
+  renderEffectGrid();
+
+  requestAnimationFrame(() => {
+    const input = document.querySelector("#effect-grid .gridjs-search-input");
+    if (input) {
+      input.value = name;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    document.getElementById("glossary-section-wrap").scrollIntoView({ behavior: "instant", block: "start" });
+  });
+}
+
+document.addEventListener("click", (e) => {
+  const link = e.target.closest(".effect-jump-link");
+  if (link) {
+    e.preventDefault();
+    jumpToEffect(link.dataset.effectName);
+  }
+});
+
 function rarityBadge(r) {
   const cls = "badge-" + r.toLowerCase();
   return `<span class="badge ${cls}">${r}</span>`;
@@ -1249,7 +1304,10 @@ function renderTalentGrid() {
       width: "12%",
       formatter: (cell) => cell ? gridjs.html(`<span class="badge badge-archetype">${cell}</span>`) : ""
     },
-    { name: "Description" }
+    {
+      name: "Description",
+      formatter: (cell) => gridjs.html(linkifyEffectRefs(cell))
+    }
   ];
   if (!talentGrid) {
     talentGrid = new gridjs.Grid({
@@ -1276,7 +1334,10 @@ function renderEffectGrid() {
       width: "16%",
       formatter: (cell) => gridjs.html(catBadge(cell))
     },
-    { name: "Description" }
+    {
+      name: "Description",
+      formatter: (cell) => gridjs.html(linkifyEffectRefs(cell))
+    }
   ];
   if (!effectGrid) {
     effectGrid = new gridjs.Grid({
