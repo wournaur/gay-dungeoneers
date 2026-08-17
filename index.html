@@ -167,7 +167,15 @@
 
   /* gridjs overrides */
   .gridjs-wrapper { border-radius: 10px; border-color: #262030 !important; background: #121017 !important; }
-  .gridjs-table { font-size: 13px; background: #121017 !important; }
+  .gridjs-table {
+    font-size: 13px;
+    background: #121017 !important;
+    /* Without this, the browser's automatic table layout renegotiates column widths
+       based on cell content, so long Description/Pool text steals space from the
+       narrower Name/Category/Cost columns and their headers clip. Fixed layout makes
+       every column's specified width authoritative; overflow just wraps instead. */
+    table-layout: fixed !important;
+  }
   .gridjs-container { color: #e8e4f0 !important; }
   .gridjs-head { background: transparent !important; }
   th.gridjs-th {
@@ -342,7 +350,7 @@
   .page-tab-btn:hover { color: #c9a8f5; background: #16131c; }
   .page-tab-btn.active { color: #fff; background: #7c4fd6; }
 
-  .page-panel { display: none; }
+  .page-panel { display: none; scroll-margin-top: 60px; }
   .page-panel.active { display: block; }
 
   .glossary-heading {
@@ -799,7 +807,7 @@
 <hr class="rb-hr">
 <h2 id="7-weaknesses-status-effects">7. Weaknesses & Status Effects</h2>
 <p>A debilitating hit — burning you, restraining you, knocking you off balance — applies a <strong>weakness</strong> to your defense pool. That weakness has a name (its "parent," like <em>Burning</em> or <em>Concussed</em>) and a magnitude, and carries an attached <strong>status effect</strong> describing what happens each round. Most status effects scale off that magnitude — the <strong>parent modifier</strong>.</p>
-<p>The full list of status effects is in the <a href="#11-glossary" class="rb-anchor-link">Glossary</a>, alongside the talent list.</p>
+<p>The full list of status effects is in the <a href="#" data-glossary-tab="effects" class="rb-anchor-link">Glossary</a>, alongside the talent list.</p>
 <hr class="rb-hr">
 <h2 id="8-party-groups-roles">8. Party, Groups & Roles</h2>
 <p>Combatants can form groups of up to <strong>3</strong>. Grouping affects two things:</p>
@@ -1063,6 +1071,7 @@ const TALENTS = [
   {name:"Sadistic", category:"Support", rarity:"Common", archetype:"", stacks:"", desc:"Whenever you create a weakness on an enemy, increase its modifier by 1."},
   {name:"Salamander", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"You are immune to fire-based damage. Cold attacks deal double damage to you instead."},
   {name:"Second Wind", category:"Tank", rarity:"Rare", archetype:"", stacks:"", desc:"Regain 1d4 hit points at the end of each combat."},
+  {name:"Sentry", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever an enemy misses an attack against you, deal it damage equal to your current hit points."},
   {name:"Shrapnel", category:"Damage", rarity:"Common", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. Whenever you deal ranged damage, apply Shrapnel (Agony) with a modifier equal to Spellslinger."},
   {name:"Silver Tongue", category:"Support", rarity:"Common", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Mock ability. You may reroll Influence or Trick checks made using Bard once."},
   {name:"Skill Bonus (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +1 in a chosen skill."},
@@ -1086,40 +1095,43 @@ const TALENTS = [
   {name:"Trophy", category:"Damage", rarity:"Common", archetype:"Hunter", stacks:"", desc:"Gain 1 Hunter. Whenever you reduce a creature to 0 hit points, restore hit points equal to Hunter."},
   {name:"Uplifting", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you use Cleric in your pool to grant an extra bonus to an ally, increase it by Cleric."},
   {name:"Vengeful", category:"Tank", rarity:"Common", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Whenever you take damage, all enemies gain Spite (Agony) equal to Warlock."},
-  {name:"Vessel", category:"General", rarity:"Legendary", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you kill a creature, add +1 to a random stat."}
+  {name:"Vessel", category:"General", rarity:"Legendary", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you kill a creature, add +1 to a random stat."},
+  {name:"Wail", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you take damage from an attack, apply Woe (Weaken) equal to that attack's success tier."}
 ];
 
 const EFFECTS = [
-  {name:"Burn", category:"Damage Per Round", desc:"Take damage equal to Burning at the start of each round, and Burning decreases naturally by 1 each round. You can't regain hit points while Burning is active."},
-  {name:"Bleed", category:"Damage Per Round", desc:"Take damage equal to Bleeding at the start of each round. Bleeding doesn't decrease naturally; whenever you regain hit points, reduce the healing and Bleeding by the same amount."},
-  {name:"Poison", category:"Damage Per Round", desc:"Take damage equal to Poisoned at the start of each round and apply the Poison penalty to all rolls. Poison doesn't decrease naturally."},
   {name:"Agony", category:"Damage Per Round", desc:"Take 1 damage at the start of each round, and reduce the parent modifier by 1."},
-  {name:"Mana Burn", category:"Damage Per Round", desc:"Lose 1 mana at the start of each round, and reduce the parent modifier by 1."},
-  {name:"Honey Badgered", category:"Damage Per Round", desc:"Take 1d6 damage at the start of each round, and reduce all your rolls by 1d6 (rerolled each time). Honey Badgered decreases naturally by 1 each round."},
+  {name:"Barrage", category:"Bonus", desc:"While you have action points, your attacks cost none and deal half damage. Each attack reduces the parent modifier by 1, ending once it reaches 0. Missing an attack empties your action points."},
+  {name:"Bleed", category:"Damage Per Round", desc:"Take damage equal to Bleeding at the start of each round. Bleeding doesn't decrease naturally; whenever you regain hit points, reduce the healing and Bleeding by the same amount."},
+  {name:"Bolster", category:"Bonus", desc:"Add the parent modifier to the damage of your next attack, then end."},
+  {name:"Burn", category:"Damage Per Round", desc:"Take damage equal to Burning at the start of each round, and Burning decreases naturally by 1 each round. You can't regain hit points while Burning is active."},
   {name:"Concussion", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to rolls. Reduce the parent modifier by 1 each time it applies."},
-  {name:"Restrained", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Fight, Throw, and Move rolls. Ends when the parent modifier reaches 0."},
-  {name:"Disarm", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Fight, Shoot, and Throw rolls. Ends when the parent modifier reaches 0."},
-  {name:"Immobilized", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Move rolls. Ends when the parent modifier reaches 0."},
-  {name:"Fear", category:"Control", desc:"You cannot target the creature that frightened you with attacks. Ends when the parent modifier reaches 0."},
-  {name:"Freezing", category:"Control", desc:"Reduce the parent modifier by 1 each round. At -5 or lower, this effect becomes Frozen (Incapacitated)."},
+  {name:"Counter", category:"Defense", desc:"If the attack was melee, reflect a percentage of pre-mitigation damage back to the attacker."},
+  {name:"Deflecting", category:"Defense", desc:"Ranged attacks against you are redirected to a random opponent of yours instead."},
   {name:"Demoralize", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to your next roll, then end."},
-  {name:"Wounded", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Endure rolls, and increase all damage taken by the same amount. Ends when the parent modifier reaches 0."},
+  {name:"Disarm", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Fight, Shoot, and Throw rolls. Ends when the parent modifier reaches 0."},
   {name:"Doom", category:"Control", desc:"Whenever you take damage, if your hit points fall to the parent modifier or lower, you are executed immediately."},
   {name:"Exposed", category:"Control", desc:"The next hits against you roll their damage dice at maximum, one die per point of the parent modifier, until it's used up. Decreases naturally by 1 each round."},
-  {name:"Incapacitated", category:"Control", desc:"You cannot act on your turn."},
-  {name:"Resistance", category:"Defense", desc:"Halve all incoming damage."},
-  {name:"Invulnerable", category:"Defense", desc:"Take no damage."},
-  {name:"Deflecting", category:"Defense", desc:"Ranged attacks against you are redirected to a random opponent of yours instead."},
-  {name:"Counter", category:"Defense", desc:"If the attack was melee, reflect a percentage of pre-mitigation damage back to the attacker."},
-  {name:"Warded", category:"Defense", desc:"Absorb incoming damage up to the parent modifier before it reduces your hit points."},
+  {name:"Fear", category:"Control", desc:"You cannot target the creature that frightened you with attacks. Ends when the parent modifier reaches 0."},
+  {name:"Freezing", category:"Control", desc:"Reduce the parent modifier by 1 each round. At -5 or lower, this effect becomes Frozen (Incapacitated)."},
   {name:"Hiding", category:"Bonus", desc:"You cannot be targeted until you are spotted. Ends immediately after you attack."},
-  {name:"Morale", category:"Bonus", desc:"Add the parent modifier to your next roll, then end."},
-  {name:"Precision", category:"Bonus", desc:"Reduce your next ranged attack's critical tier threshold by the parent modifier, then end and remove it."},
-  {name:"Bolster", category:"Bonus", desc:"Add the parent modifier to the damage of your next attack, then end."},
-  {name:"Power", category:"Bonus", desc:"Add damage dice equal to the parent modifier to your next attack, counting as part of the base die for critical hits. Reduce that attack's roll by 2 per point of parent modifier, then end."},
-  {name:"Barrage", category:"Bonus", desc:"While you have action points, your attacks cost none and deal half damage. Each attack reduces the parent modifier by 1, ending once it reaches 0. Missing an attack empties your action points."},
+  {name:"Honey Badgered", category:"Damage Per Round", desc:"Take 1d6 damage at the start of each round, and reduce all your rolls by 1d6 (rerolled each time). Honey Badgered decreases naturally by 1 each round."},
+  {name:"Immobilized", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Move rolls. Ends when the parent modifier reaches 0."},
+  {name:"Incapacitated", category:"Control", desc:"You cannot act on your turn."},
   {name:"Inspiration", category:"Bonus", desc:"Reroll your next roll once, then reduce the parent modifier by 1, ending once it reaches 0."},
-  {name:"Regeneration", category:"Bonus", desc:"Heal 1 hit point at the start of each round, and reduce the parent modifier by 1."}
+  {name:"Invulnerable", category:"Defense", desc:"Take no damage."},
+  {name:"Mana Burn", category:"Damage Per Round", desc:"Lose 1 mana at the start of each round, and reduce the parent modifier by 1."},
+  {name:"Morale", category:"Bonus", desc:"Add the parent modifier to your next roll, then end."},
+  {name:"Poison", category:"Damage Per Round", desc:"Take damage equal to Poisoned at the start of each round and apply the Poison penalty to all rolls. Poison doesn't decrease naturally."},
+  {name:"Power", category:"Bonus", desc:"Add damage dice equal to the parent modifier to your next attack, counting as part of the base die for critical hits. Reduce that attack's roll by 2 per point of parent modifier, then end."},
+  {name:"Precision", category:"Bonus", desc:"Reduce your next ranged attack's critical tier threshold by the parent modifier, then end and remove it."},
+  {name:"Regeneration", category:"Bonus", desc:"Heal 1 hit point at the start of each round, and reduce the parent modifier by 1."},
+  {name:"Resistance", category:"Defense", desc:"Halve all incoming damage."},
+  {name:"Restrained", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Fight, Throw, and Move rolls. Ends when the parent modifier reaches 0."},
+  {name:"Warded", category:"Defense", desc:"Absorb incoming damage up to the parent modifier before it reduces your hit points."},
+  {name:"Weaken", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to all rolls. Weaken decreases naturally by 1 each round."},
+  {name:"Wounded", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Endure rolls, and increase all damage taken by the same amount. Ends when the parent modifier reaches 0."}
+
 ];
 
 const ABILITIES = [
@@ -1175,6 +1187,7 @@ const ABILITIES = [
   {name:"Reveal Fear", category:"Effect", cost:"Free", pool:"Mental + Influence", desc:"Make a contested Influence check. On a success, apply Frightened (Fear)."},
   {name:"Roundshield", category:"Attack", cost:"Free", pool:"Physical + Fight + Roundshield", desc:"Make a melee attack that deals 1d4 damage."},
   {name:"Sabre", category:"Attack", cost:"Free", pool:"Physical + Fight + Finesse + Sabre", desc:"Make a melee attack that deals 1d8 damage."},
+  {name:"Scream", category:"Save", cost:"Free", pool:"Mental + Focus", desc:"Force the target to make a Focus check against DC 12 or gain Startled (Demoralized)."},
   {name:"Shatter", category:"Attack", cost:"12 MP", pool:"Mental + Cast", desc:"Make a spell attack against a Frozen target, dealing damage equal to 10% of its max hit points per stack of Frozen consumed, and end the effect."},
   {name:"Shortsword", category:"Attack", cost:"Free", pool:"Physical + Fight + Finesse + Shortsword", desc:"Make a melee attack that deals 1d8 damage."},
   {name:"Siphon Warmth", category:"Heal", cost:"2 MP", pool:"Mental + Cast", desc:"Consume the target's Burning and restore 1d4 hit points per stack removed."},
@@ -1189,7 +1202,8 @@ const ABILITIES = [
   {name:"Thousand Needles", category:"Attack", cost:"Free", pool:"Physical + Finesse", desc:"Make a melee attack. On a hit, apply -1 Prick. On a critical hit, consume all Prick and deal double the stacks as damage instead — or if the target has none, apply Prick equal to 1 plus your critical tier. Costs no action points; missing empties them."},
   {name:"Wall of Earth", category:"Create", cost:"8 MP", pool:"Mental + Cast", desc:"Create a wall of earth that occupies 1 tile per success tier."},
   {name:"Wall of Fire", category:"Create", cost:"8 MP", pool:"Mental + Cast", desc:"Create a wall of fire that occupies 1 tile per success tier. Creatures inside take 1d12 damage and gain Burning (Burn). Lasts 4 rounds."},
-  {name:"Warhammer", category:"Attack", cost:"Free", pool:"Physical + Fight + Warhammer", desc:"Make a melee attack that deals 1d8 damage."},
+  {name:"Warhammer", category:"Attack", cost:"Free", pool:"Physical + Fight + Warhammer", desc:"Make a melee attack that deals 1d8 damage."}
+
 ];
 
 // What each talent automatically grants when picked, straight from descriptions.json's
@@ -1282,7 +1296,11 @@ function linkifyEffectRefs(text) {
   });
 }
 
-function jumpToEffect(name) {
+// Switches to the Glossary page tab and one of its sub-tabs (talents / effects /
+// abilities). Shared by every in-page link that needs to send the reader to the
+// Glossary — the effect-name jump-links in descriptions, and the "see Glossary"
+// links from the Rulebook prose (e.g. Section 7's link to the status effect list).
+function activateGlossaryTab(subtab) {
   document.querySelectorAll(".page-tab-btn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".page-panel").forEach(p => p.classList.remove("active"));
   document.querySelector('.page-tab-btn[data-page="glossary"]').classList.add("active");
@@ -1290,8 +1308,12 @@ function jumpToEffect(name) {
 
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.querySelector('.tab-btn[data-tab="effects"]').classList.add("active");
-  document.getElementById("panel-effects").classList.add("active");
+  document.querySelector(`.tab-btn[data-tab="${subtab}"]`).classList.add("active");
+  document.getElementById("panel-" + subtab).classList.add("active");
+}
+
+function jumpToEffect(name) {
+  activateGlossaryTab("effects");
 
   effectCatFilter = "All";
   buildChips("effect-cat-chips", effectCats, effectCatFilter, effectCatClickHandler);
@@ -1303,7 +1325,7 @@ function jumpToEffect(name) {
       input.value = name;
       input.dispatchEvent(new Event("input", { bubbles: true }));
     }
-    document.getElementById("glossary-section-wrap").scrollIntoView({ behavior: "instant", block: "start" });
+    document.getElementById("page-glossary").scrollIntoView({ behavior: "instant", block: "start" });
   });
 }
 
@@ -1312,6 +1334,14 @@ document.addEventListener("click", (e) => {
   if (link) {
     e.preventDefault();
     jumpToEffect(link.dataset.effectName);
+    return;
+  }
+
+  const glossaryLink = e.target.closest("a[data-glossary-tab]");
+  if (glossaryLink) {
+    e.preventDefault();
+    activateGlossaryTab(glossaryLink.dataset.glossaryTab);
+    document.getElementById("page-glossary").scrollIntoView({ behavior: "instant", block: "start" });
   }
 });
 
@@ -1384,17 +1414,17 @@ function renderTalentGrid() {
     { name: "Stacks", hidden: true },
     {
       name: "Category",
-      width: "11%",
+      width: "130px",
       formatter: (cell) => gridjs.html(catBadge(cell))
     },
     {
       name: "Rarity",
-      width: "9%",
+      width: "110px",
       formatter: (cell) => gridjs.html(rarityBadge(cell))
     },
     {
       name: "Archetype",
-      width: "12%",
+      width: "150px",
       formatter: (cell) => cell ? gridjs.html(`<span class="badge badge-archetype">${cell}</span>`) : ""
     },
     {
@@ -1421,10 +1451,10 @@ function renderEffectGrid() {
   document.getElementById("effect-count").textContent = data.length + " effect" + (data.length === 1 ? "" : "s");
   const rows = data.map(e => [e.name, e.category, e.desc]);
   const columns = [
-    { name: "Name", width: "16%" },
+    { name: "Name", width: "14%" },
     {
       name: "Category",
-      width: "16%",
+      width: "170px",
       formatter: (cell) => gridjs.html(catBadge(cell))
     },
     {
@@ -1446,19 +1476,31 @@ function renderEffectGrid() {
   }
 }
 
+// "Free" / "2 MP" / "10 MP + 3/round" sort as text puts "10 MP" before "2 MP" — pull out
+// the base MP number so Cost sorts numerically instead.
+function parseCostForSort(cost) {
+  if (cost === "Free") return 0;
+  const m = cost.match(/^(\d+)/);
+  return m ? parseInt(m[1], 10) : 0;
+}
+
 function renderAbilityGrid() {
   const data = filteredAbilities();
   document.getElementById("ability-count").textContent = data.length + " abilit" + (data.length === 1 ? "y" : "ies");
   const rows = data.map(a => [a.name, a.category, a.cost, a.pool, a.desc]);
   const columns = [
-    { name: "Name", width: "14%" },
+    { name: "Name", width: "160px" },
     {
       name: "Category",
-      width: "10%",
+      width: "140px",
       formatter: (cell) => gridjs.html(catBadge(cell))
     },
-    { name: "Cost", width: "11%" },
-    { name: "Pool", width: "17%" },
+    {
+      name: "Cost",
+      width: "130px",
+      sort: { compare: (a, b) => parseCostForSort(a) - parseCostForSort(b) }
+    },
+    { name: "Pool", width: "170px" },
     {
       name: "Description",
       formatter: (cell) => gridjs.html(linkifyEffectRefs(cell))
@@ -1904,45 +1946,3 @@ document.getElementById("cb-export-btn").addEventListener("click", () => {
 
   const sheet = {
     level,
-    hitpoints: { current: hpMax, max: hpMax },
-    manapoints: { current: mpMax, max: mpMax },
-    actionpoints: { current: 3, max: 3 },
-    background_bonuses: bg,
-    stat_bonuses: stats,
-    skill_bonuses: skills,
-    item_bonuses: {},
-    extra_bonuses: extra,
-    status_effects: {},
-    weaknesses: weak,
-    talents: talentRows.map(r => r.name),
-    abilities: [...abilityRows]
-  };
-
-  const json = JSON.stringify({ [name]: sheet }, null, 2);
-  document.getElementById("cb-export-textarea").value = json;
-  const outputBox = document.getElementById("cb-export-output");
-  outputBox.style.display = "block";
-  outputBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
-});
-
-document.getElementById("cb-copy-btn").addEventListener("click", () => {
-  const textarea = document.getElementById("cb-export-textarea");
-  textarea.select();
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(textarea.value).catch(() => {});
-  }
-  const btn = document.getElementById("cb-copy-btn");
-  const orig = btn.textContent;
-  btn.textContent = "Copied!";
-  setTimeout(() => { btn.textContent = orig; }, 1200);
-});
-
-renderSkillsGrid();
-renderExtraBonuses();
-renderWeaknesses();
-renderTalentRows();
-renderAbilities();
-</script>
-
-</body>
-</html>
