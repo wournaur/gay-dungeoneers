@@ -142,6 +142,11 @@
   .badge-cat-control { background: rgba(251,146,60,0.2); color: #fdba74; }
   .badge-cat-defense { background: rgba(34,197,94,0.2); color: #86efac; }
   .badge-cat-bonus { background: rgba(139,92,246,0.22); color: #c4b5fd; }
+  .badge-cat-attack { background: rgba(239,68,68,0.2); color: #fca5a5; }
+  .badge-cat-heal { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+  .badge-cat-effect { background: rgba(217,70,239,0.2); color: #f0abfc; }
+  .badge-cat-create { background: rgba(56,189,248,0.18); color: #7dd3fc; }
+  .badge-cat-save { background: rgba(234,179,8,0.2); color: #fde047; }
 
   .badge-archetype {
     background: rgba(56,189,248,0.18);
@@ -834,13 +839,14 @@
     <div class="rb-nav-title">Gay Dungeoneers Glossary</div>
   </div>
 
-  <div class="subtitle" style="margin: 4px 0 0 0;">Talents and status effects — sortable, filterable, always current with descriptions.json.</div>
+  <div class="subtitle" style="margin: 4px 0 0 0;">Talents, status effects, and abilities — sortable, filterable, always current with descriptions.json and abilities.json.</div>
 
 <div class="glossary-section-wrap" id="glossary-section-wrap">
 
 <div class="tabs">
   <button class="tab-btn active" data-tab="talents">Talents</button>
   <button class="tab-btn" data-tab="effects">Status Effects</button>
+  <button class="tab-btn" data-tab="abilities">Abilities</button>
 </div>
 
 <div class="panel active" id="panel-talents">
@@ -871,6 +877,17 @@
     <div class="count-badge" id="effect-count"></div>
   </div>
   <div class="grid-wrap" id="effect-grid"></div>
+</div>
+
+<div class="panel" id="panel-abilities">
+  <div class="filter-row">
+    <div class="filter-group">
+      <div class="filter-label">Category</div>
+      <div class="chip-row" id="ability-cat-chips"></div>
+    </div>
+    <div class="count-badge" id="ability-count"></div>
+  </div>
+  <div class="grid-wrap" id="ability-grid"></div>
 </div>
 
 </div>
@@ -1105,6 +1122,76 @@ const EFFECTS = [
   {name:"Regeneration", category:"Bonus", desc:"Heal 1 hit point at the start of each round, and reduce the parent modifier by 1."}
 ];
 
+const ABILITIES = [
+  {name:"Armageddon", category:"Attack", cost:"12 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 4d12 damage and applies Burning (Burn). Requires at least +5 Channeling."},
+  {name:"Barrier", category:"Effect", cost:"4 MP", pool:"Mental + Cast", desc:"Grant Warded equal to double your success tier."},
+  {name:"Bind", category:"Effect", cost:"Free", pool:"Physical + Finesse", desc:"Make a melee attack that applies Bound (Restrained)."},
+  {name:"Buckler", category:"Attack", cost:"Free", pool:"Physical + Fight + Buckler", desc:"Make a melee attack that deals 1d4 damage."},
+  {name:"Bulldoze", category:"Attack", cost:"Free", pool:"Physical + Fight + Labor", desc:"Deal 2d8 damage to a line of enemies and apply Concussed (Concussion). A critical hit also applies Stunned (Incapacitated)."},
+  {name:"Bunny Punch", category:"Attack", cost:"Free", pool:"Physical + Fight", desc:"Make a melee attack that deals 1d12 damage (1d4 while transformed). Your third hit transforms you into your True Form, granting Invulnerable until you're hit by a critical attack."},
+  {name:"BURN", category:"Attack", cost:"Free", pool:"", desc:"An automatic hit that deals 1d12 damage and applies Burning (Burn)."},
+  {name:"Charged Shot", category:"Effect", cost:"Free", pool:"Mental + Focus", desc:"Grant yourself Charged Shot (Power)."},
+  {name:"Cleanse", category:"Heal", cost:"4 MP", pool:"Mental + Cast", desc:"Reduce a chosen weakness by your success tier."},
+  {name:"Cold Touch", category:"Attack", cost:"2 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 1d6 damage and applies Chilled (Freezing)."},
+  {name:"Copy", category:"Create", cost:"5 MP", pool:"Mental + Cast", desc:"Copy the target's last used ability for 1 turn plus Wizard. Requires and consumes at least 5 Analyzed."},
+  {name:"Earth Armor", category:"Effect", cost:"4 MP", pool:"Mental + Cast", desc:"Grant Warded equal to double your success tier."},
+  {name:"Earth Disc", category:"Attack", cost:"2 MP", pool:"Mental + Shoot", desc:"Make a spell attack that deals 2d4 damage and applies Concussed (Concussion)."},
+  {name:"Earth Grasp", category:"Attack", cost:"8 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 2d10 damage and applies Grasped (Restrained)."},
+  {name:"Earthquake", category:"Attack", cost:"16 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 2d12 damage and applies Concussed (Concussion) to all enemies. Requires at least +5 Channeling."},
+  {name:"Echidna", category:"Attack", cost:"Free", pool:"", desc:"Deal 1 damage."},
+  {name:"Encourage", category:"Effect", cost:"1 MP", pool:"Social + Perform", desc:"Apply Encouraged (Morale)."},
+  {name:"Fat Ass", category:"Effect", cost:"Free", pool:"Physical + Fight + Move + Labor + Endure", desc:"Make a melee attack that applies Flattened (Restrained)."},
+  {name:"Fiery Tail", category:"Effect", cost:"Free", pool:"Physical + Finesse", desc:"Make a melee attack that applies Wrapped (Restrained). While Wrapped, the target also gains Burning (Burn) each round."},
+  {name:"Flame Bolt", category:"Attack", cost:"1 MP", pool:"Mental + Shoot", desc:"Make a spell attack that deals 1d6 damage and applies Burning (Burn)."},
+  {name:"Flame Pillar", category:"Attack", cost:"4 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 1d12 damage and applies Burning (Burn)."},
+  {name:"Flame Ward", category:"Effect", cost:"2 MP", pool:"Mental + Cast", desc:"Grant yourself Fiery Touch and Warded (Flame Ward), an extra layer of hit points that absorbs damage."},
+  {name:"FOCUS", category:"Effect", cost:"Free", pool:"Mental + Focus", desc:"Restore mana equal to your success tier."},
+  {name:"Freeze", category:"Create", cost:"8 MP", pool:"Mental + Cast", desc:"Create frozen tiles up to your success tier. Creatures that move away from or into one must succeed a check or become Proned (Immobilized). Lasts 4 rounds."},
+  {name:"Friendly Attack", category:"Attack", cost:"Free", pool:"Physical + Fight", desc:"Make an attack that, on a hit, randomly uses Echidna, Hooded Pitohui, or Honey Badger's effect. Honey Badger can't be picked while an enemy is already Honey Badgered."},
+  {name:"Frostheart", category:"Effect", cost:"8 MP", pool:"Mental + Cast", desc:"Apply Frozen (Incapacitated) to the target equal to your success tier, along with Warded and Regeneration. Grants RELEASE, which ends the effect early."},
+  {name:"Frozen Tomb", category:"Effect", cost:"12 MP", pool:"Mental + Cast", desc:"Apply Frozen (Incapacitated) to the target equal to your success tier. Requires and consumes at least +5 Channeling."},
+  {name:"Gauntlets", category:"Attack", cost:"Free", pool:"Physical + Fight + Gauntlets", desc:"Make a melee attack that deals 1d6 damage."},
+  {name:"Harmony", category:"Heal", cost:"1 MP", pool:"Social + Perform", desc:"Restore hit points equal to your success tier."},
+  {name:"Heat Ray", category:"Attack", cost:"8 MP", pool:"Mental + Shoot", desc:"Make a spell attack that deals 2d10 damage and applies Burning (Burn) to a line of enemies."},
+  {name:"Heat Wave", category:"Effect", cost:"2 MP", pool:"Mental + Cast", desc:"Make a contested spell check that applies Brittle (Exposed)."},
+  {name:"Hide Shell", category:"Effect", cost:"Free", pool:"Physical + Endure", desc:"Make an Endure check to gain Spiked Carapace, granting Resistance, Counter (50%), and Hiding."},
+  {name:"Honey Badger", category:"Attack", cost:"Free", pool:"", desc:"Deal 1d6 damage and apply Get It Off Me! (Honey Badgered)."},
+  {name:"Hooded Pitohui", category:"Attack", cost:"Free", pool:"", desc:"Deal 1d4 damage. A max roll also applies Poisoned (Poison)."},
+  {name:"Icicle", category:"Attack", cost:"1 MP", pool:"Mental + Shoot", desc:"Make a spell attack that deals 1d4 damage and applies Chilled (Freezing)."},
+  {name:"Incinerate", category:"Attack", cost:"10 MP", pool:"Mental + Cast", desc:"Consume all Burning on the target and deal 5 damage per stack consumed. If this drops the target to 20% hit points or lower, execute it."},
+  {name:"Inject Poison", category:"Effect", cost:"Free", pool:"Physical + Sneak", desc:"Apply Poisoned (Poison). Requires the target to have at least -3 Latched."},
+  {name:"Inspire", category:"Effect", cost:"2 MP", pool:"Social + Perform", desc:"Apply Inspired (Inspiration)."},
+  {name:"KABEDON", category:"Attack", cost:"Free", pool:"Physical + Fight + Labor", desc:"Make a melee attack that deals 1d8 damage and applies Pinned (Restrained)."},
+  {name:"Latch", category:"Effect", cost:"Free", pool:"Physical + Shoot", desc:"Make a ranged attack that applies Latched (Restrained)."},
+  {name:"Meditate", category:"Create", cost:"Free", pool:"Mental + Focus", desc:"Toggle Meditating (Incapacitated) on yourself. While active, grants the FOCUS and STOP abilities."},
+  {name:"Mock", category:"Attack", cost:"1 MP", pool:"Social + Perform", desc:"Make a spell attack that deals damage equal to your success tier and applies Demoralized (Demoralize)."},
+  {name:"Move Earth", category:"Attack", cost:"6 MP", pool:"Mental + Shoot", desc:"Make a spell attack that moves the target a number of tiles equal to your success tier and applies Concussed (Concussion)."},
+  {name:"One Inch Punch", category:"Attack", cost:"Free", pool:"Physical + Fight", desc:"Make a melee attack that deals 1 damage. On a critical hit, its base damage becomes 2d10 instead."},
+  {name:"Onslaught", category:"Effect", cost:"Free", pool:"Physical + Focus", desc:"Grant yourself Onslaught (Barrage)."},
+  {name:"Potshot", category:"Attack", cost:"Free", pool:"Physical + Shoot", desc:"Make a ranged attack that deals 1d8 damage and applies Concussed (Concussion)."},
+  {name:"Rejuvenate", category:"Heal", cost:"4 MP", pool:"Mental + Cast", desc:"Grant Regeneration equal to double your success tier."},
+  {name:"RELEASE", category:"Effect", cost:"Free", pool:"", desc:"End Frostheart early, removing Frozen and its linked effects."},
+  {name:"Restore", category:"Heal", cost:"1 MP", pool:"Mental + Cast", desc:"Restore 1d4 hit points plus your success tier."},
+  {name:"Reveal Fear", category:"Effect", cost:"Free", pool:"Mental + Influence", desc:"Make a contested Influence check. On a success, apply Frightened (Fear)."},
+  {name:"Roundshield", category:"Attack", cost:"Free", pool:"Physical + Fight + Roundshield", desc:"Make a melee attack that deals 1d4 damage."},
+  {name:"Sabre", category:"Attack", cost:"Free", pool:"Physical + Fight + Finesse + Sabre", desc:"Make a melee attack that deals 1d8 damage."},
+  {name:"Shatter", category:"Attack", cost:"12 MP", pool:"Mental + Cast", desc:"Make a spell attack against a Frozen target, dealing damage equal to 10% of its max hit points per stack of Frozen consumed, and end the effect."},
+  {name:"Shortsword", category:"Attack", cost:"Free", pool:"Physical + Fight + Finesse + Shortsword", desc:"Make a melee attack that deals 1d8 damage."},
+  {name:"Siphon Warmth", category:"Heal", cost:"2 MP", pool:"Mental + Cast", desc:"Consume the target's Burning and restore 1d4 hit points per stack removed."},
+  {name:"SLIP", category:"Save", cost:"Free", pool:"Physical + Move", desc:"Force the target to make a Move check against Freeze's DC or fall Proned (Immobilized)."},
+  {name:"Snakebite", category:"Attack", cost:"Free", pool:"Physical + Finesse", desc:"Make a melee attack. On a critical hit, apply Snakebite (Disarm) equal to the critical tier."},
+  {name:"Snowstorm", category:"Create", cost:"10 MP + 3/round", pool:"Mental + Cast", desc:"Toggle a snowstorm that applies 2 Chilled (Freezing) and Demoralized (Demoralize) equal to your success tier to all enemies each round. Costs 3 mana per round to sustain; cast again to end it for free."},
+  {name:"Somersault Slam", category:"Attack", cost:"Free", pool:"Physical + Fight", desc:"Make a melee attack that deals 1d10 damage. Requires the target to have at least -5 Bound."},
+  {name:"Spit", category:"Attack", cost:"Free", pool:"Physical + Shoot", desc:"Make a ranged attack that deals 1d8 damage and changes the color of the target's tile. If Ying uses this ability, the tile becomes yellow; if Yan uses it, it becomes blue."},
+  {name:"Splash", category:"Effect", cost:"Free", pool:"Mental + Cast", desc:"Make a spell attack that deals 4d6 damage to a 5x5 area. If Ying uses this ability, the affected tiles become yellow; if Yan uses it, they become blue."},
+  {name:"Staff", category:"Attack", cost:"Free", pool:"Physical + Fight + Staff", desc:"Make a melee attack that deals 1d6 damage."},
+  {name:"STOP", category:"Effect", cost:"Free", pool:"", desc:"End Meditate early."},
+  {name:"Thousand Needles", category:"Attack", cost:"Free", pool:"Physical + Finesse", desc:"Make a melee attack. On a hit, apply -1 Prick. On a critical hit, consume all Prick and deal double the stacks as damage instead — or if the target has none, apply Prick equal to 1 plus your critical tier. Costs no action points; missing empties them."},
+  {name:"Wall of Earth", category:"Create", cost:"8 MP", pool:"Mental + Cast", desc:"Create a wall of earth that occupies 1 tile per success tier."},
+  {name:"Wall of Fire", category:"Create", cost:"8 MP", pool:"Mental + Cast", desc:"Create a wall of fire that occupies 1 tile per success tier. Creatures inside take 1d12 damage and gain Burning (Burn). Lasts 4 rounds."},
+  {name:"Warhammer", category:"Attack", cost:"Free", pool:"Physical + Fight + Warhammer", desc:"Make a melee attack that deals 1d8 damage."},
+];
+
 // What each talent automatically grants when picked, straight from descriptions.json's
 // "grants" field. Talents not listed here either grant nothing mechanical or require a
 // player choice (Skill Bonus / Stat Bonus / Favored — handled separately below).
@@ -1241,11 +1328,13 @@ let talentCatFilter = "All";
 let talentRarityFilter = "All";
 let talentArchetypeFilter = "All";
 let effectCatFilter = "All";
+let abilityCatFilter = "All";
 
 const talentCats = ["All", "Damage", "Tank", "Support", "General", "Innate"];
 const talentRarities = ["All", "Common", "Rare", "Legendary"];
 const talentArchetypes = ["All", "Bard", "Cleric", "Druid", "Duelist", "Elementalist", "Hunter", "Knight", "Martial Artist", "Rampager", "Sharp Eye", "Spellslinger", "Swashbuckler", "Thief", "Valkyrie", "Warlock", "Wizard"];
 const effectCats = ["All", "Damage Per Round", "Control", "Defense", "Bonus"];
+const abilityCats = ["All", "Attack", "Heal", "Effect", "Create", "Save"];
 
 function buildChips(containerId, options, activeVal, onClick) {
   const el = document.getElementById(containerId);
@@ -1271,7 +1360,11 @@ function filteredEffects() {
   return EFFECTS.filter(e => effectCatFilter === "All" || e.category === effectCatFilter);
 }
 
-let talentGrid, effectGrid;
+function filteredAbilities() {
+  return ABILITIES.filter(a => abilityCatFilter === "All" || a.category === abilityCatFilter);
+}
+
+let talentGrid, effectGrid, abilityGrid;
 
 function renderTalentGrid() {
   const data = filteredTalents();
@@ -1353,6 +1446,38 @@ function renderEffectGrid() {
   }
 }
 
+function renderAbilityGrid() {
+  const data = filteredAbilities();
+  document.getElementById("ability-count").textContent = data.length + " abilit" + (data.length === 1 ? "y" : "ies");
+  const rows = data.map(a => [a.name, a.category, a.cost, a.pool, a.desc]);
+  const columns = [
+    { name: "Name", width: "14%" },
+    {
+      name: "Category",
+      width: "10%",
+      formatter: (cell) => gridjs.html(catBadge(cell))
+    },
+    { name: "Cost", width: "11%" },
+    { name: "Pool", width: "17%" },
+    {
+      name: "Description",
+      formatter: (cell) => gridjs.html(linkifyEffectRefs(cell))
+    }
+  ];
+  if (!abilityGrid) {
+    abilityGrid = new gridjs.Grid({
+      columns,
+      data: rows,
+      sort: true,
+      search: true,
+      pagination: { limit: 15 },
+      className: { table: "gridjs-table" }
+    }).render(document.getElementById("ability-grid"));
+  } else {
+    abilityGrid.updateConfig({ columns, data: rows }).forceRender();
+  }
+}
+
 function catClickHandler(v) {
   talentCatFilter = v;
   buildChips("talent-cat-chips", talentCats, talentCatFilter, catClickHandler);
@@ -1373,14 +1498,21 @@ function effectCatClickHandler(v) {
   buildChips("effect-cat-chips", effectCats, effectCatFilter, effectCatClickHandler);
   renderEffectGrid();
 }
+function abilityCatClickHandler(v) {
+  abilityCatFilter = v;
+  buildChips("ability-cat-chips", abilityCats, abilityCatFilter, abilityCatClickHandler);
+  renderAbilityGrid();
+}
 
 buildChips("talent-cat-chips", talentCats, talentCatFilter, catClickHandler);
 buildChips("talent-rarity-chips", talentRarities, talentRarityFilter, rarityClickHandler);
 buildChips("talent-archetype-chips", talentArchetypes, talentArchetypeFilter, archetypeClickHandler);
 buildChips("effect-cat-chips", effectCats, effectCatFilter, effectCatClickHandler);
+buildChips("ability-cat-chips", abilityCats, abilityCatFilter, abilityCatClickHandler);
 
 renderTalentGrid();
 renderEffectGrid();
+renderAbilityGrid();
 
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
