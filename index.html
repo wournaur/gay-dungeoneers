@@ -339,9 +339,6 @@
     margin: 0 0 10px 0;
   }
 
-  .builder-header { margin-bottom: 8px; }
-  .builder-title { font-size: 24px; margin: 0 0 4px 0; color: #f0ecf9; }
-
   /* Character builder */
   .cb-section { margin-top: 34px; padding-top: 24px; border-top: 1px solid #262030; }
   .cb-block { margin-bottom: 22px; }
@@ -867,12 +864,18 @@
 
 <div class="page-panel" id="page-builder">
 
-<div class="builder-header">
-  <h1 class="builder-title">Builder</h1>
-  <div class="subtitle">Roll a mock level-up, or build a character sheet from scratch and export it as JSON.</div>
-</div>
+<div class="rb-wrap">
+  <div class="rb-nav">
+    <div class="rb-nav-title">Gay Dungeoneers Builder</div>
+    <div class="rb-nav-links">
+      <a href="#level-up-simulator">Level-Up Simulator</a>
+      <a href="#character-builder">Create Your Character</a>
+    </div>
+  </div>
 
-<div class="sim-section" id="level-up-simulator" style="border-top:none; margin-top:0; padding-top:0; scroll-margin-top:74px;">
+  <div class="subtitle" style="margin: 4px 0 0 0;">Roll a mock level-up, or build a character sheet from scratch and export it as JSON.</div>
+
+<div class="sim-section" id="level-up-simulator" style="border-top:none; margin-top:8px; padding-top:0; scroll-margin-top:74px;">
   <h3 class="sim-heading">Level-Up Simulator</h3>
   <div class="sim-subtitle">Mirrors what <code>!lvlup</code> actually rolls: HP/MP gains plus 3 talent options, weighted 5% legendary / 15% rare / 80% common per pick.</div>
   <div class="sim-buttons">
@@ -956,6 +959,8 @@
     <textarea id="cb-export-textarea" class="cb-export-textarea" readonly spellcheck="false"></textarea>
     <button class="cb-copy-btn" id="cb-copy-btn">Copy JSON</button>
   </div>
+</div>
+
 </div>
 
 </div>
