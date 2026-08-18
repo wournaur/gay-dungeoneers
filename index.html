@@ -990,7 +990,15 @@
       <div class="cb-suggestions" id="cb-talent-suggestions"></div>
     </div>
     <div class="cb-talent-list" id="cb-talent-list"></div>
-    <div class="cb-hint" id="cb-ability-note" style="margin-top:8px;">Abilities granted so far: <span id="cb-ability-list">None yet — granted automatically by certain talents.</span></div>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Abilities <span class="cb-hint">(auto-added by certain talents — add more freely, or remove any)</span></div>
+    <div class="cb-talent-search-wrap">
+      <input type="text" id="cb-ability-search" class="cb-input cb-input-wide" placeholder="Search abilities to add…" autocomplete="off">
+      <div class="cb-suggestions" id="cb-ability-suggestions"></div>
+    </div>
+    <div class="cb-talent-list" id="cb-ability-list"></div>
   </div>
 
   <button class="cb-export-btn" id="cb-export-btn">Export Character</button>
@@ -1096,7 +1104,7 @@ const TALENTS = [
   {name:"Uplifting", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you use Cleric in your pool to grant an extra bonus to an ally, increase it by Cleric."},
   {name:"Vengeful", category:"Tank", rarity:"Common", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Whenever you take damage, all enemies gain Spite (Agony) equal to Warlock."},
   {name:"Vessel", category:"General", rarity:"Legendary", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you kill a creature, add +1 to a random stat."},
-  {name:"Wail", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you take damage from an attack, apply Woe (Weaken) equal to that attack's success tier."}
+  {name:"Wail", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you take damage from an attack, all enemies gain Woe (Weaken) equal to that attack's success tier."}
 ];
 
 const EFFECTS = [
@@ -1187,7 +1195,7 @@ const ABILITIES = [
   {name:"Reveal Fear", category:"Effect", cost:"Free", pool:"Mental + Influence", desc:"Make a contested Influence check. On a success, apply Frightened (Fear)."},
   {name:"Roundshield", category:"Attack", cost:"Free", pool:"Physical + Fight + Roundshield", desc:"Make a melee attack that deals 1d4 damage."},
   {name:"Sabre", category:"Attack", cost:"Free", pool:"Physical + Fight + Finesse + Sabre", desc:"Make a melee attack that deals 1d8 damage."},
-  {name:"Scream", category:"Save", cost:"Free", pool:"Mental + Focus", desc:"Force the target to make a Focus check against DC 12 or gain Startled (Demoralized)."},
+  {name:"Scream", category:"Save", cost:"Free", pool:"Mental + Focus", desc:"Force the target to make a Focus check against DC 12 or gain Startled (Demoralize)."},
   {name:"Shatter", category:"Attack", cost:"12 MP", pool:"Mental + Cast", desc:"Make a spell attack against a Frozen target, dealing damage equal to 10% of its max hit points per stack of Frozen consumed, and end the effect."},
   {name:"Shortsword", category:"Attack", cost:"Free", pool:"Physical + Fight + Finesse + Shortsword", desc:"Make a melee attack that deals 1d8 damage."},
   {name:"Siphon Warmth", category:"Heal", cost:"2 MP", pool:"Mental + Cast", desc:"Consume the target's Burning and restore 1d4 hit points per stack removed."},
@@ -1766,8 +1774,27 @@ function renderTalentRows() {
 }
 
 function renderAbilities() {
-  const el = document.getElementById("cb-ability-list");
-  el.textContent = abilityRows.length ? abilityRows.join(", ") : "None yet — granted automatically by certain talents.";
+  const c = document.getElementById("cb-ability-list");
+  if (abilityRows.length === 0) {
+    c.innerHTML = `<div class="sim-placeholder">No abilities added yet.</div>`;
+    return;
+  }
+  c.innerHTML = "";
+  abilityRows.forEach(row => {
+    const chip = document.createElement("div");
+    chip.className = "cb-talent-chip";
+    chip.innerHTML = `<span>${row.name}</span><button class="cb-chip-remove" title="Remove">×</button>`;
+    chip.querySelector(".cb-chip-remove").addEventListener("click", () => {
+      abilityRows = abilityRows.filter(r => r.id !== row.id);
+      renderAbilities();
+    });
+    c.appendChild(chip);
+  });
+}
+
+function addAbility(name) {
+  abilityRows.push({ id: nextRowId++, name });
+  renderAbilities();
 }
 
 function grantExtraBonus(name, amount) {
@@ -1843,7 +1870,7 @@ function addTalent(name, depth) {
     if (grants.skill_bonuses) Object.entries(grants.skill_bonuses).forEach(([k, v]) => grantSkillBonus(k, v));
     if (grants.hp_max) grantHpMax(grants.hp_max);
     if (grants.mp_max) grantMpMax(grants.mp_max);
-    if (grants.abilities) grants.abilities.forEach(a => abilityRows.push(a));
+    if (grants.abilities) grants.abilities.forEach(a => abilityRows.push({ id: nextRowId++, name: a }));
   }
   renderTalentRows();
   renderAbilities();
@@ -1857,12 +1884,10 @@ cbTooltip.className = "cb-tooltip";
 cbTooltip.id = "cb-talent-tooltip";
 document.body.appendChild(cbTooltip);
 
-function showTalentTooltip(t, anchorEl) {
-  cbTooltip.innerHTML = `
-    <div class="cb-tooltip-name">${t.name} ${rarityBadge(t.rarity)}${catBadge(t.category)}${t.archetype ? `<span class="badge badge-archetype">${t.archetype}</span>` : ""}</div>
-    <div class="cb-tooltip-desc">${t.desc}</div>
-    ${t.stacks ? `<div class="cb-tooltip-stacks">${t.stacks}</div>` : ""}
-  `;
+// Shared positioning for the Character Builder's hover tooltip (used by both the Talent
+// and Ability search suggestions) — keeps it inside the viewport on either side of the
+// anchor row.
+function positionCbTooltip(anchorEl) {
   cbTooltip.classList.add("open");
   const rect = anchorEl.getBoundingClientRect();
   const tooltipWidth = 260;
@@ -1877,6 +1902,25 @@ function showTalentTooltip(t, anchorEl) {
       cbTooltip.style.top = Math.max(12, window.innerHeight - tRect.height - 12) + "px";
     }
   });
+}
+
+function showTalentTooltip(t, anchorEl) {
+  cbTooltip.innerHTML = `
+    <div class="cb-tooltip-name">${t.name} ${rarityBadge(t.rarity)}${catBadge(t.category)}${t.archetype ? `<span class="badge badge-archetype">${t.archetype}</span>` : ""}</div>
+    <div class="cb-tooltip-desc">${t.desc}</div>
+    ${t.stacks ? `<div class="cb-tooltip-stacks">${t.stacks}</div>` : ""}
+  `;
+  positionCbTooltip(anchorEl);
+}
+
+function showAbilityTooltip(a, anchorEl) {
+  const meta = [a.cost, a.pool].filter(Boolean).join(" · ");
+  cbTooltip.innerHTML = `
+    <div class="cb-tooltip-name">${a.name} ${catBadge(a.category)}</div>
+    <div class="cb-tooltip-desc">${a.desc}</div>
+    ${meta ? `<div class="cb-tooltip-stacks">${meta}</div>` : ""}
+  `;
+  positionCbTooltip(anchorEl);
 }
 
 function hideTalentTooltip() {
@@ -1908,9 +1952,41 @@ cbTalentSearch.addEventListener("input", () => {
   });
 });
 
+const cbAbilitySearch = document.getElementById("cb-ability-search");
+const cbAbilitySuggestions = document.getElementById("cb-ability-suggestions");
+
+cbAbilitySearch.addEventListener("input", () => {
+  const q = cbAbilitySearch.value.trim().toLowerCase();
+  cbAbilitySuggestions.innerHTML = "";
+  hideTalentTooltip();
+  if (!q) { cbAbilitySuggestions.classList.remove("open"); return; }
+  const matches = ABILITIES.filter(a => a.name.toLowerCase().includes(q)).slice(0, 8);
+  if (matches.length === 0) { cbAbilitySuggestions.classList.remove("open"); return; }
+  cbAbilitySuggestions.classList.add("open");
+  matches.forEach(a => {
+    const row = document.createElement("div");
+    row.className = "cb-suggestion-row";
+    row.innerHTML = `<span class="cb-suggestion-name">${a.name}</span>${catBadge(a.category)}`;
+    row.addEventListener("mouseenter", () => showAbilityTooltip(a, row));
+    row.addEventListener("mouseleave", hideTalentTooltip);
+    row.addEventListener("click", () => {
+      addAbility(a.name);
+      cbAbilitySearch.value = "";
+      cbAbilitySuggestions.innerHTML = "";
+      cbAbilitySuggestions.classList.remove("open");
+      hideTalentTooltip();
+    });
+    cbAbilitySuggestions.appendChild(row);
+  });
+});
+
 document.addEventListener("click", e => {
   if (!cbTalentSuggestions.contains(e.target) && e.target !== cbTalentSearch) {
     cbTalentSuggestions.classList.remove("open");
+    hideTalentTooltip();
+  }
+  if (!cbAbilitySuggestions.contains(e.target) && e.target !== cbAbilitySearch) {
+    cbAbilitySuggestions.classList.remove("open");
     hideTalentTooltip();
   }
 });
@@ -1957,7 +2033,7 @@ document.getElementById("cb-export-btn").addEventListener("click", () => {
     status_effects: {},
     weaknesses: weak,
     talents: talentRows.map(r => r.name),
-    abilities: [...abilityRows]
+    abilities: abilityRows.map(r => r.name)
   };
 
   const json = JSON.stringify({ [name]: sheet }, null, 2);
