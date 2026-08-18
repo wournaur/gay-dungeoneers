@@ -1946,3 +1946,45 @@ document.getElementById("cb-export-btn").addEventListener("click", () => {
 
   const sheet = {
     level,
+    hitpoints: { current: hpMax, max: hpMax },
+    manapoints: { current: mpMax, max: mpMax },
+    actionpoints: { current: 3, max: 3 },
+    background_bonuses: bg,
+    stat_bonuses: stats,
+    skill_bonuses: skills,
+    item_bonuses: {},
+    extra_bonuses: extra,
+    status_effects: {},
+    weaknesses: weak,
+    talents: talentRows.map(r => r.name),
+    abilities: [...abilityRows]
+  };
+
+  const json = JSON.stringify({ [name]: sheet }, null, 2);
+  document.getElementById("cb-export-textarea").value = json;
+  const outputBox = document.getElementById("cb-export-output");
+  outputBox.style.display = "block";
+  outputBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+
+document.getElementById("cb-copy-btn").addEventListener("click", () => {
+  const textarea = document.getElementById("cb-export-textarea");
+  textarea.select();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(textarea.value).catch(() => {});
+  }
+  const btn = document.getElementById("cb-copy-btn");
+  const orig = btn.textContent;
+  btn.textContent = "Copied!";
+  setTimeout(() => { btn.textContent = orig; }, 1200);
+});
+
+renderSkillsGrid();
+renderExtraBonuses();
+renderWeaknesses();
+renderTalentRows();
+renderAbilities();
+</script>
+
+</body>
+</html>
