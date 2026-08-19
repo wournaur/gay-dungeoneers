@@ -148,6 +148,14 @@
   .badge-cat-create { background: rgba(56,189,248,0.18); color: #7dd3fc; }
   .badge-cat-save { background: rgba(234,179,8,0.2); color: #fde047; }
 
+  .badge-cat-head { background: rgba(56,189,248,0.18); color: #7dd3fc; }
+  .badge-cat-body { background: rgba(34,197,94,0.2); color: #86efac; }
+  .badge-cat-mainhand { background: rgba(239,68,68,0.2); color: #fca5a5; }
+  .badge-cat-offhand { background: rgba(249,115,22,0.2); color: #fdba74; }
+  .badge-cat-twohanded { background: rgba(217,70,239,0.2); color: #f0abfc; }
+  .badge-cat-accessory { background: rgba(139,92,246,0.22); color: #c4b5fd; }
+  .badge-cat-consumable { background: rgba(234,179,8,0.2); color: #fde047; }
+
   .badge-archetype {
     background: rgba(56,189,248,0.18);
     color: #7dd3fc;
@@ -172,11 +180,24 @@
   .effect-jump-link.effect-negative { color: #e2707a; }
   .effect-jump-link.effect-negative:hover { color: #f5a3ab; }
 
+  /* The Glossary page reuses .rb-wrap (for the sticky nav header look) and
+     .glossary-section-wrap, but both of those get a max-width: 880px meant for
+     Rulebook prose readability (injected by assemble.js, shared with the Rulebook and
+     Builder pages). Data tables want the opposite of narrow prose columns — this
+     two-class selector beats that single-class rule on specificity regardless of
+     source order, so the Glossary's tables can stretch to the page's full width. */
+  .rb-wrap.glossary-page-wrap { max-width: none; }
+
   /* gridjs overrides */
   .gridjs-wrapper { border-radius: 10px; border-color: #262030 !important; background: #121017 !important; }
   .gridjs-table {
     font-size: 13px;
     background: #121017 !important;
+    /* Force the table to always fill its container's full width rather than shrinking
+       to the natural width of its (mixed px/%) column specs — without this, a table
+       whose column widths sum to less than the container just leaves dead space on the
+       right instead of stretching to use it. */
+    width: 100% !important;
     /* Without this, the browser's automatic table layout renegotiates column widths
        based on cell content, so long Description/Pool text steals space from the
        narrower Name/Category/Cost columns and their headers clip. Fixed layout makes
@@ -675,8 +696,6 @@
   }
   .rb-table td { color: #d8d2e4; }
 
-  .glossary-section-wrap { max-width: 880px; margin: 0 auto; }
-
 </style>
 </head>
 <body>
@@ -809,7 +828,7 @@
 <p><strong>Help (reactive).</strong> Same rules as Help above, used as a reaction. Costs 2 AP flat, no escalation on repeats.</p>
 <hr class="rb-hr">
 <h2 id="6-spellcasting">6. Spellcasting</h2>
-<p>Every spell requires <strong>Channeling</strong> first: use a Create an Advantage action targeting yourself against the spell's listed DC — your success tier becomes your Channeling bonus. Some spells need a minimum amount banked before you can cast them.</p>
+<p>Every spell requires <strong>Channeling</strong> first: use a Create an Advantage action targeting yourself against the spell's listed DC — your success tier becomes your Channeling bonus. That DC is always <strong>8 + the spell's mana cost</strong>, unless the spell says otherwise. Some spells need a minimum amount banked before you can cast them.</p>
 <p>Once you have enough, spend it on a later action to cast the spell.</p>
 <hr class="rb-hr">
 <h2 id="7-weaknesses-status-effects">7. Weaknesses & Status Effects</h2>
@@ -841,7 +860,7 @@
 <p>Defeating the boss grants your whole group a random-sized <strong>wishbox</strong>.</p>
 <p>If your group's shared HP pool hits 0, that's permadeath — roll new characters.</p>
 <p>If you don't think you can survive the next room, you can <strong>escape</strong> instead. That's always an option, but it wipes your progress entirely: level resets to 1, and you lose every talent from the run.</p>
-
+<p>The only progression that survives between runs happens during <strong>downtime sessions</strong> outside the dungeon, where you can learn new skills or abilities, or buy items for your next attempt.</p>
   </div>
 </div>
 
@@ -849,12 +868,12 @@
 
 <div class="page-panel" id="page-glossary">
 
-<div class="rb-wrap">
+<div class="rb-wrap glossary-page-wrap">
   <div class="rb-nav">
     <div class="rb-nav-title">Gay Dungeoneers Glossary</div>
   </div>
 
-  <div class="subtitle" style="margin: 4px 0 0 0;">Talents, status effects, and abilities — sortable, filterable, always current with descriptions.json and abilities.json.</div>
+  <div class="subtitle" style="margin: 4px 0 0 0;">Talents, status effects, abilities, and items — sortable, filterable, always current with descriptions.json, abilities.json, and items.json.</div>
 
 <div class="glossary-section-wrap" id="glossary-section-wrap">
 
@@ -862,6 +881,7 @@
   <button class="tab-btn active" data-tab="talents">Talents</button>
   <button class="tab-btn" data-tab="effects">Status Effects</button>
   <button class="tab-btn" data-tab="abilities">Abilities</button>
+  <button class="tab-btn" data-tab="items">Items</button>
 </div>
 
 <div class="panel active" id="panel-talents">
@@ -905,6 +925,17 @@
   <div class="grid-wrap" id="ability-grid"></div>
 </div>
 
+<div class="panel" id="panel-items">
+  <div class="filter-row">
+    <div class="filter-group">
+      <div class="filter-label">Slot</div>
+      <div class="chip-row" id="item-slot-chips"></div>
+    </div>
+    <div class="count-badge" id="item-count"></div>
+  </div>
+  <div class="grid-wrap" id="item-grid"></div>
+</div>
+
 </div>
 </div>
 </div>
@@ -917,6 +948,7 @@
     <div class="rb-nav-links">
       <a href="#level-up-simulator">Level-Up Simulator</a>
       <a href="#character-builder">Create Your Character</a>
+      <a href="#item-builder">Item Builder</a>
     </div>
   </div>
 
@@ -1008,11 +1040,102 @@
     <div class="cb-talent-list" id="cb-ability-list"></div>
   </div>
 
+  <div class="cb-block">
+    <div class="cb-block-label">Equipment <span class="cb-hint">(searches the Glossary's Items catalog, including anything you've saved in the Item Builder — equipping applies its passive bonuses and grants once, same as talents)</span></div>
+    <div class="cb-talent-search-wrap">
+      <input type="text" id="cb-item-search" class="cb-input cb-input-wide" placeholder="Search items to equip…" autocomplete="off">
+      <div class="cb-suggestions" id="cb-item-suggestions"></div>
+    </div>
+    <div class="cb-talent-list" id="cb-item-list"></div>
+  </div>
+
   <button class="cb-export-btn" id="cb-export-btn">Export Character</button>
 
   <div class="cb-export-output" id="cb-export-output" style="display:none;">
     <textarea id="cb-export-textarea" class="cb-export-textarea" readonly spellcheck="false"></textarea>
     <button class="cb-copy-btn" id="cb-copy-btn">Copy JSON</button>
+  </div>
+</div>
+
+<div class="cb-section" id="item-builder" style="scroll-margin-top:150px;">
+  <h3 class="sim-heading">Item Builder</h3>
+  <div class="sim-subtitle">Builds an item in the same shape items.json stores. Saving adds it to the Glossary's Items tab and makes it searchable in Equipment above — this only lives in your browser, so you'll still need to copy the exported JSON into the real items.json yourself to make it live for the bot.</div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Name</div>
+    <input type="text" id="ib-name" class="cb-input cb-input-wide" placeholder="Item name">
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Slot / Durability</div>
+    <div class="cb-vitals-grid">
+      <label class="cb-mini-field">Slot
+        <select id="ib-slot" class="cb-input">
+          <option>Head</option>
+          <option>Body</option>
+          <option>Main Hand</option>
+          <option>Off Hand</option>
+          <option>Two Handed</option>
+          <option>Accessory</option>
+          <option>Consumable</option>
+        </select>
+      </label>
+      <label class="cb-mini-field">Durability<input type="number" id="ib-durability" class="cb-input" value="100"></label>
+      <label class="cb-mini-field">Pool Bonus <span class="cb-hint">(only applies when named directly in a roll)</span><input type="number" id="ib-pool-bonus" class="cb-input" value="1"></label>
+    </div>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Stat Bonus <span class="cb-hint">(passive while equipped — e.g. Physical, Mental, Social)</span></div>
+    <div class="cb-rows" id="ib-stat-rows"></div>
+    <button class="cb-add-btn" id="ib-add-stat">+ Add Stat Bonus</button>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Skill Bonus <span class="cb-hint">(passive while equipped)</span></div>
+    <div class="cb-rows" id="ib-skill-rows"></div>
+    <button class="cb-add-btn" id="ib-add-skill">+ Add Skill Bonus</button>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Weakness <span class="cb-hint">(a drawback applied passively while equipped)</span></div>
+    <div class="cb-rows" id="ib-weakness-rows"></div>
+    <button class="cb-add-btn" id="ib-add-weakness">+ Add Weakness</button>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Granted Abilities</div>
+    <div class="cb-talent-search-wrap">
+      <input type="text" id="ib-ability-search" class="cb-input cb-input-wide" placeholder="Search abilities to grant…" autocomplete="off">
+      <div class="cb-suggestions" id="ib-ability-suggestions"></div>
+    </div>
+    <div class="cb-talent-list" id="ib-ability-list"></div>
+  </div>
+
+  <div class="cb-block">
+    <div class="cb-block-label">Granted Talents</div>
+    <div class="cb-talent-search-wrap">
+      <input type="text" id="ib-talent-search" class="cb-input cb-input-wide" placeholder="Search talents to grant…" autocomplete="off">
+      <div class="cb-suggestions" id="ib-talent-suggestions"></div>
+    </div>
+    <div class="cb-talent-list" id="ib-talent-list"></div>
+  </div>
+
+  <div class="sim-buttons">
+    <button class="cb-export-btn" id="ib-export-btn">Export Item JSON</button>
+    <button class="cb-export-btn" id="ib-save-btn">Save as Custom Item</button>
+  </div>
+  <div class="cb-hint" id="ib-save-message" style="margin-top:8px;"></div>
+
+  <div class="cb-export-output" id="ib-export-output" style="display:none;">
+    <textarea id="ib-export-textarea" class="cb-export-textarea" readonly spellcheck="false"></textarea>
+    <button class="cb-copy-btn" id="ib-copy-btn">Copy JSON</button>
+  </div>
+
+  <div class="cb-block" style="margin-top:24px;">
+    <div class="cb-block-label">Your Custom Items <span class="cb-hint">(everything you've saved above, grouped by slot the same way items.json is)</span></div>
+    <div class="cb-talent-list" id="ib-custom-item-list"></div>
+    <button class="cb-export-btn" id="ib-export-all-btn" style="margin-top:10px;">Export All Custom Items JSON</button>
   </div>
 </div>
 
@@ -1023,7 +1146,6 @@
 <script>
 const TALENTS = [
   {name:"Aggravator", category:"Damage", rarity:"Common", archetype:"Rampager", stacks:"", desc:"Gain 1 Rampager. Whenever you miss with an attack, gain Aggravated (Bolster)."},
-  {name:"Agile", category:"General", rarity:"Common", archetype:"Thief", stacks:"", desc:"Gain 1 Thief. You may reroll Move checks made using Thief once."},
   {name:"Aura of Devotion", category:"Tank", rarity:"Rare", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Allies next to you take reduced damage equal to Knight."},
   {name:"Aura of Serenity", category:"Support", rarity:"Rare", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Allies next to you reduce incoming weaknesses by 1 for every 2 Cleric."},
   {name:"Barkskin", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Physical damage you take is halved. Fire sources deal double damage to you instead."},
@@ -1038,12 +1160,14 @@ const TALENTS = [
   {name:"Cryomancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 3", desc:"Gain 1 Cryomancer and the following abilities for each point:\n1 — Icicle, Freeze\n2 — Cold Touch, Snowstorm\n3 — Shatter, Frozen Tomb"},
   {name:"Deadeye", category:"Damage", rarity:"Rare", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. At the start of each round, you have a 10% chance to gain Tumbleweed (Precision), +5% for each Spellslinger. If you made no rolls last round, add another 20%."},
   {name:"Deflecting", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Ranged attacks against you are redirected to a random opponent instead."},
+  {name:"Dexterous", category:"General", rarity:"Common", archetype:"Thief", stacks:"", desc:"Gain 1 Thief. You may reroll Move or Finesse checks made using Thief once."},
   {name:"Empowering", category:"Support", rarity:"Common", archetype:"Bard", stacks:"", desc:"Gain 1 Bard. Your heals grant Empowered (Bolster) equal to Bard."},
   {name:"En Garde", category:"Tank", rarity:"Common", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. While wielding a one-handed sword, reduce damage from a non-critical hit by rolling your weapon die."},
   {name:"Encore", category:"Support", rarity:"Rare", archetype:"Bard", stacks:"", desc:"Gain 1 Bard and the Encourage ability. Whenever anyone in your group lands a critical hit using Morale, restore mana equal to that attack's critical tier."},
   {name:"Favored (Common)", category:"General", rarity:"Common", archetype:"", stacks:"", desc:"Select a talent of your choice up to Common."},
   {name:"Favored (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"", desc:"Select a talent of your choice up to Legendary."},
   {name:"Favored (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"", desc:"Select a talent of your choice up to Rare."},
+  {name:"Feint", category:"Tank", rarity:"Common", archetype:"Duelist", stacks:"", desc:"Gain 1 Duelist. Whenever you defend against a melee attack, the attacker gains Baited (Exposed)."},
   {name:"Fiery Touch", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Whenever you deal or take damage from a melee attack (using Fight), the other creature gains Burning (Burn)."},
   {name:"Fire Resistance", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Fire-based attacks against you are halved."},
   {name:"Fresh (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +2 MP."},
@@ -1051,7 +1175,7 @@ const TALENTS = [
   {name:"Fresh (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +5 MP."},
   {name:"Geomancer", category:"Damage", rarity:"Rare", archetype:"Elementalist", stacks:"Stacks up to 3", desc:"Gain 1 Geomancer and the following abilities for each point:\n1 — Earth Disc, Earth Armor\n2 — Wall of Earth, Move Earth\n3 — Earth Grasp, Earthquake"},
   {name:"Glory", category:"Tank", rarity:"Rare", archetype:"Valkyrie", stacks:"", desc:"Gain 1 Valkyrie. The first time you'd be reduced to 0 hit points each combat, restore hit points equal to Valkyrie instead."},
-  {name:"Gnash", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Your attacks deal no direct damage. Instead, the target gains Agony equal to the damage you would have dealt."},
+  {name:"Gnash", category:"Innate", rarity:"Rare", archetype:"", stacks:"", desc:"Your attacks deal no direct damage. Instead, the target gains Teeth Marks (Agony) equal to the damage you would have dealt."},
   {name:"Healthy (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +2 HP."},
   {name:"Healthy (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +10 HP."},
   {name:"Healthy (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +5 HP."},
@@ -1092,7 +1216,7 @@ const TALENTS = [
   {name:"Skill Bonus (Common)", category:"General", rarity:"Common", archetype:"", stacks:"Stacks", desc:"Gain +1 in a chosen skill."},
   {name:"Skill Bonus (Legendary)", category:"General", rarity:"Legendary", archetype:"", stacks:"Stacks", desc:"Gain +3 in a chosen skill."},
   {name:"Skill Bonus (Rare)", category:"General", rarity:"Rare", archetype:"", stacks:"Stacks", desc:"Gain +2 in a chosen skill."},
-  {name:"Sneak Attack", category:"Damage", rarity:"Rare", archetype:"Thief", stacks:"", desc:"Gain 1 Thief. While Hidden, your next attack gains a critical tier equal to Thief."},
+  {name:"Sneak Attack", category:"Damage", rarity:"Rare", archetype:"Thief", stacks:"", desc:"Gain 1 Thief and the Hide ability. While Hidden, your next attack gains a critical tier equal to Thief."},
   {name:"Sole Protector", category:"Tank", rarity:"Legendary", archetype:"", stacks:"", desc:"While you have this talent, enemies can only target you with attacks."},
   {name:"Spell Efficiency", category:"General", rarity:"Rare", archetype:"Wizard", stacks:"", desc:"Gain 1 Wizard and the Meditate ability. When you cast a spell, there is a 5% chance to refund 50% of its mana cost. This chance increases by an extra 5% for each Wizard."},
   {name:"Split Shot", category:"Damage", rarity:"Common", archetype:"Spellslinger", stacks:"", desc:"Gain 1 Spellslinger. While there are at least two enemies, your ranged damage is halved and the other half deals damage to a random enemy."},
@@ -1106,6 +1230,7 @@ const TALENTS = [
   {name:"Tenacity", category:"Tank", rarity:"Rare", archetype:"Knight", stacks:"", desc:"Gain 1 Knight and 1 Endure. Whenever you gain a weakness, reduce its modifier by 1 for every 2 Knight."},
   {name:"Terror", category:"Damage", rarity:"Rare", archetype:"Warlock", stacks:"", desc:"Gain 1 Warlock. Each time you deal damage, all enemies gain Terror (Agony) equal to Warlock."},
   {name:"Tormentor", category:"Damage", rarity:"Rare", archetype:"", stacks:"", desc:"Your attack damage is halved, but the target gains Torment (Agony) equal to what it would have dealt at full damage."},
+  {name:"Touch of Death", category:"Damage", rarity:"Legendary", archetype:"", stacks:"", desc:"Your unarmed melee attacks have a 1% chance to execute the target."},
   {name:"Tough", category:"Tank", rarity:"Common", archetype:"Knight", stacks:"", desc:"Gain 1 Knight. Reduce all damage taken from attacks by Knight."},
   {name:"Trophy", category:"Damage", rarity:"Common", archetype:"Hunter", stacks:"", desc:"Gain 1 Hunter. Whenever you reduce a creature to 0 hit points, restore hit points equal to Hunter."},
   {name:"Uplifting", category:"Support", rarity:"Common", archetype:"Cleric", stacks:"", desc:"Gain 1 Cleric. Whenever you use Cleric in your pool to grant an extra bonus to an ally, increase it by Cleric."},
@@ -1143,7 +1268,7 @@ const EFFECTS = [
   {name:"Regeneration", category:"Bonus", desc:"Heal 1 hit point at the start of each round, and reduce the parent modifier by 1."},
   {name:"Resistance", category:"Defense", desc:"Halve all incoming damage."},
   {name:"Restrained", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Fight, Throw, and Move rolls. Ends when the parent modifier reaches 0."},
-  {name:"Warded", category:"Defense", desc:"Absorb incoming damage up to the parent modifier before it reduces your hit points."},
+  {name:"Ward", category:"Defense", desc:"Absorb incoming damage up to the parent modifier before it reduces your hit points."},
   {name:"Weaken", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to all rolls. Weaken decreases naturally by 1 each round."},
   {name:"Wounded", category:"Control", desc:"Apply an additional penalty equal to the parent modifier to Endure rolls, and increase all damage taken by the same amount. Ends when the parent modifier reaches 0."}
 
@@ -1151,7 +1276,7 @@ const EFFECTS = [
 
 const ABILITIES = [
   {name:"Armageddon", category:"Attack", dc:null, dcPlusLevel:false, cost:"12 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 4d12 damage and applies Burning (Burn). Requires at least +5 Channeling."},
-  {name:"Barrier", category:"Effect", dc:12, dcPlusLevel:false, cost:"4 MP", pool:"Mental + Cast", desc:"Grant Warded equal to double your success tier."},
+  {name:"Barrier", category:"Effect", dc:12, dcPlusLevel:false, cost:"4 MP", pool:"Mental + Cast", desc:"Grant Barrier (Ward) equal to double your success tier."},
   {name:"Bind", category:"Effect", dc:null, dcPlusLevel:false, cost:"Free", pool:"Physical + Finesse", desc:"Make a melee attack that applies Bound (Restrained)."},
   {name:"Buckler", category:"Attack", dc:null, dcPlusLevel:false, cost:"Free", pool:"Physical + Fight + Buckler", desc:"Make a melee attack that deals 1d4 damage."},
   {name:"Bulldoze", category:"Attack", dc:null, dcPlusLevel:false, cost:"Free", pool:"Physical + Fight + Labor", desc:"Deal 2d8 damage to a line of enemies and apply Concussed (Concussion). A critical hit also applies Stunned (Incapacitated)."},
@@ -1161,7 +1286,7 @@ const ABILITIES = [
   {name:"Cleanse", category:"Heal", dc:14, dcPlusLevel:false, cost:"4 MP", pool:"Mental + Cast", desc:"Reduce a chosen weakness by your success tier."},
   {name:"Cold Touch", category:"Attack", dc:null, dcPlusLevel:false, cost:"2 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 1d6 damage and applies Chilled (Freezing)."},
   {name:"Copy", category:"Create", dc:16, dcPlusLevel:false, cost:"5 MP", pool:"Mental + Cast", desc:"Copy the target's last used ability for 1 turn plus Wizard. Requires and consumes at least 5 Analyzed."},
-  {name:"Earth Armor", category:"Effect", dc:12, dcPlusLevel:false, cost:"4 MP", pool:"Mental + Cast", desc:"Grant Warded equal to double your success tier."},
+  {name:"Earth Armor", category:"Effect", dc:12, dcPlusLevel:false, cost:"4 MP", pool:"Mental + Cast", desc:"Grant Earth Armor (Ward) equal to double your success tier."},
   {name:"Earth Disc", category:"Attack", dc:null, dcPlusLevel:false, cost:"2 MP", pool:"Mental + Shoot", desc:"Make a spell attack that deals 2d4 damage and applies Concussed (Concussion)."},
   {name:"Earth Grasp", category:"Attack", dc:null, dcPlusLevel:false, cost:"8 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 2d10 damage and applies Grasped (Restrained)."},
   {name:"Earthquake", category:"Attack", dc:null, dcPlusLevel:false, cost:"16 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 2d12 damage and applies Concussed (Concussion) to all enemies. Requires at least +5 Channeling."},
@@ -1171,17 +1296,18 @@ const ABILITIES = [
   {name:"Fiery Tail", category:"Effect", dc:null, dcPlusLevel:false, cost:"Free", pool:"Physical + Finesse", desc:"Make a melee attack that applies Wrapped (Restrained). While Wrapped, the target also gains Burning (Burn) each round."},
   {name:"Flame Bolt", category:"Attack", dc:null, dcPlusLevel:false, cost:"1 MP", pool:"Mental + Shoot", desc:"Make a spell attack that deals 1d6 damage and applies Burning (Burn)."},
   {name:"Flame Pillar", category:"Attack", dc:null, dcPlusLevel:false, cost:"4 MP", pool:"Mental + Cast", desc:"Make a spell attack that deals 1d12 damage and applies Burning (Burn)."},
-  {name:"Flame Ward", category:"Effect", dc:6, dcPlusLevel:false, cost:"2 MP", pool:"Mental + Cast", desc:"Grant yourself Fiery Touch and Warded (Flame Ward), an extra layer of hit points that absorbs damage."},
+  {name:"Flame Ward", category:"Effect", dc:6, dcPlusLevel:false, cost:"2 MP", pool:"Mental + Cast", desc:"Grant Fiery Touch and Flame Ward (Ward)."},
   {name:"FOCUS", category:"Effect", dc:10, dcPlusLevel:false, cost:"Free", pool:"Mental + Focus", desc:"Restore mana equal to your success tier."},
   {name:"Freeze", category:"Create", dc:4, dcPlusLevel:false, cost:"8 MP", pool:"Mental + Cast", desc:"Create frozen tiles up to your success tier. Creatures that move away from or into one must succeed a check or become Proned (Immobilized). Lasts 4 rounds."},
   {name:"Friendly Attack", category:"Attack", dc:null, dcPlusLevel:false, cost:"Free", pool:"Physical + Fight", desc:"Make an attack that, on a hit, randomly uses Echidna, Hooded Pitohui, or Honey Badger's effect. Honey Badger can't be picked while an enemy is already Honey Badgered."},
-  {name:"Frostheart", category:"Effect", dc:6, dcPlusLevel:false, cost:"8 MP", pool:"Mental + Cast", desc:"Apply Frozen (Incapacitated, Warded, Regeneration) to the target equal to your success tier."},
+  {name:"Frostheart", category:"Effect", dc:6, dcPlusLevel:false, cost:"8 MP", pool:"Mental + Cast", desc:"Apply Frozen (Incapacitated, Ward, Regeneration) to the target equal to your success tier."},
   {name:"Frozen Tomb", category:"Effect", dc:18, dcPlusLevel:false, cost:"12 MP", pool:"Mental + Cast", desc:"Apply Frozen (Incapacitated) to the target equal to your success tier. Requires and consumes at least +5 Channeling."},
   {name:"Gauntlets", category:"Attack", dc:null, dcPlusLevel:false, cost:"Free", pool:"Physical + Fight + Gauntlets", desc:"Make a melee attack that deals 1d6 damage."},
   {name:"Harmony", category:"Heal", dc:8, dcPlusLevel:false, cost:"1 MP", pool:"Social + Perform", desc:"Restore hit points equal to your success tier."},
   {name:"Heat Ray", category:"Attack", dc:null, dcPlusLevel:false, cost:"8 MP", pool:"Mental + Shoot", desc:"Make a spell attack that deals 2d10 damage and applies Burning (Burn) to a line of enemies."},
   {name:"Heat Wave", category:"Effect", dc:null, dcPlusLevel:false, cost:"2 MP", pool:"Mental + Cast", desc:"Make a contested spell check that applies Brittle (Exposed)."},
-  {name:"Hide Shell", category:"Effect", dc:8, dcPlusLevel:false, cost:"Free", pool:"Physical + Endure", desc:"Make an Endure check to gain Spiked Carapace, granting Resistance, Counter (50%), and Hiding."},
+  {name:"Hide", category:"Effect", dc:null, dcPlusLevel:false, cost:"Free", pool:"Physical + Sneak", desc:"Make a contested Sneak check against all enemies. On a success, gain Hiding."},
+  {name:"Hide Shell", category:"Effect", dc:8, dcPlusLevel:false, cost:"Free", pool:"Physical + Endure", desc:"Make an Endure check to gain Spiked Carapace (Resistance, Counter 50%)."},
   {name:"Honey Badger", category:"Attack", dc:null, dcPlusLevel:false, cost:"Free", pool:"", desc:"Deal 1d6 damage and apply Get It Off Me! (Honey Badgered)."},
   {name:"Hooded Pitohui", category:"Attack", dc:null, dcPlusLevel:false, cost:"Free", pool:"", desc:"Deal 1d4 damage. A max roll also applies Poisoned (Poison)."},
   {name:"Icicle", category:"Attack", dc:null, dcPlusLevel:false, cost:"1 MP", pool:"Mental + Shoot", desc:"Make a spell attack that deals 1d4 damage and applies Chilled (Freezing)."},
@@ -1221,6 +1347,52 @@ const ABILITIES = [
   {name:"Warhammer", category:"Attack", dc:null, dcPlusLevel:false, cost:"Free", pool:"Physical + Fight + Warhammer", desc:"Make a melee attack that deals 1d8 damage."}
 ];
 
+// Equippable gear, straight from items.json. "extraBonus" is a pool bonus that only
+// applies when the item's own name is invoked as a roll term (like a skill or stat name)
+// — it's not passive. "statBonus"/"skillBonus" are passive bonuses applied for as long as
+// the item stays equipped. "weakness" is a passive drawback applied the same way. All
+// three dicts are empty for most current items, but the shape is kept even when empty so
+// new gear with real bonuses/drawbacks renders correctly without code changes.
+const ITEMS = [
+  {name:"Analysis Glasses", slot:"Head", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:[], grantedTalents:[]},
+  {name:"Binding Wraps", slot:"Accessory", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:["Bind", "Somersault Slam"], grantedTalents:[]},
+  {name:"Buckler", slot:"Off Hand", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:["Buckler"], grantedTalents:[]},
+  {name:"Gauntlets", slot:"Accessory", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:["Gauntlets"], grantedTalents:[]},
+  {name:"Plate Armor", slot:"Body", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:[], grantedTalents:[]},
+  {name:"Roundshield", slot:"Off Hand", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:["Roundshield"], grantedTalents:[]},
+  {name:"Sabre", slot:"Main Hand", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:["Sabre"], grantedTalents:[]},
+  {name:"Shortsword", slot:"Main Hand", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:["Shortsword"], grantedTalents:[]},
+  {name:"Shot Ring", slot:"Accessory", durability:100, extraBonus:2, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:[], grantedTalents:[]},
+  {name:"Staff", slot:"Two Handed", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:["Staff"], grantedTalents:[]},
+  {name:"Steel Feather Cape", slot:"Body", durability:100, extraBonus:2, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:[], grantedTalents:[]},
+  {name:"Stiletto", slot:"Main Hand", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:["Stiletto"], grantedTalents:[]},
+  {name:"Warhammer", slot:"Main Hand", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:["Warhammer"], grantedTalents:[]},
+  {name:"Wind's Gaol", slot:"Accessory", durability:100, extraBonus:1, statBonus:{}, skillBonus:{}, weakness:{}, grantedAbilities:[], grantedTalents:[]}
+];
+
+// Items the user builds themselves in the Item Builder (Builder tab) are kept separate
+// from the official ITEMS catalog above and persisted to localStorage so they survive
+// reloads/app restarts on this artifact. They're never written back to items.json — that
+// still has to happen on the user's end — but they show up in the Glossary's Items tab
+// and are searchable in the Character Builder's Equipment section just like real items,
+// via allItems() below, which every item-consuming piece of code should read from instead
+// of the base ITEMS constant directly.
+function loadCustomItems() {
+  try {
+    const raw = localStorage.getItem("gd_custom_items");
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+let CUSTOM_ITEMS = loadCustomItems();
+function saveCustomItems() {
+  localStorage.setItem("gd_custom_items", JSON.stringify(CUSTOM_ITEMS));
+}
+function allItems() {
+  return [...ITEMS, ...CUSTOM_ITEMS];
+}
+
 // What each talent automatically grants when picked, straight from descriptions.json's
 // "grants" field. Talents not listed here either grant nothing mechanical or require a
 // player choice (Skill Bonus / Stat Bonus / Favored — handled separately below).
@@ -1228,7 +1400,7 @@ const TALENT_GRANTS = {
   "Pursuit": {"extra_bonuses": {"Hunter": 1}},
   "Bramble": {"extra_bonuses": {"Druid": 1}},
   "Rage": {"extra_bonuses": {"Rampager": 1}},
-  "Sneak Attack": {"extra_bonuses": {"Thief": 1}},
+  "Sneak Attack": {"extra_bonuses": {"Thief": 1}, "abilities": ["Hide"]},
   "Stance of the White Snake": {"extra_bonuses": {"Martial Artist": 1}, "abilities": ["Snakebite"]},
   "Stance of the Azure Crane": {"extra_bonuses": {"Martial Artist": 1}},
   "Stance of the Iron Ox": {"extra_bonuses": {"Martial Artist": 1}},
@@ -1244,6 +1416,7 @@ const TALENT_GRANTS = {
   "Aura of Devotion": {"extra_bonuses": {"Knight": 1}},
   "Aura of Serenity": {"extra_bonuses": {"Cleric": 1}},
   "En Garde": {"extra_bonuses": {"Duelist": 1}},
+  "Feint": {"extra_bonuses": {"Duelist": 1}},
   "Riposte": {"extra_bonuses": {"Duelist": 1}},
   "Glory": {"extra_bonuses": {"Valkyrie": 1}},
   "Paragon": {"extra_bonuses": {"Valkyrie": 1}},
@@ -1251,7 +1424,7 @@ const TALENT_GRANTS = {
   "Battle-Hardened": {"extra_bonuses": {"Valkyrie": 1}},
   "Tenacity": {"extra_bonuses": {"Knight": 1}, "skill_bonuses": {"endure": 1}},
   "Observant": {"extra_bonuses": {"Sharp Eye": 1}},
-  "Agile": {"extra_bonuses": {"Thief": 1}},
+  "Dexterous": {"extra_bonuses": {"Thief": 1}},
   "Silver Tongue": {"extra_bonuses": {"Bard": 1}, "abilities": ["Mock"]},
   "Heavy Swings": {"skill_bonuses": {"fight": 1}},
   "Deadeye": {"extra_bonuses": {"Spellslinger": 1}},
@@ -1346,24 +1519,39 @@ const TALENT_TIERED_ABILITIES = {
 // in the Glossary tab's Abilities table. Only exact names already listed as granted by
 // that specific talent are linkified, so this can't accidentally match unrelated text.
 const ABILITY_NAME_SET = new Set(ABILITIES.map(a => a.name));
-function linkifyGrantedAbilities(talentName, text) {
+// Some granted ability names contain a real status-effect name as a whole word inside
+// them (e.g. "Flame Ward" contains "Ward") — if processEffectMentions ran first, it would
+// bare-match "Ward" and wrap just that word in an effect-jump-link span, which then
+// breaks linkifyGrantedAbilities's own `\bFlame Ward\b` match (the literal substring no
+// longer exists once "Ward" is sitting inside a <span>) and leaves the ability half of
+// "Flame Ward" unlinked. Fix: protect granted-ability mentions FIRST by swapping them for
+// opaque placeholder tokens (longest names first, so "Flame Ward" claims its "Ward" before
+// any shorter pass could), run every other text pass against the now-protected string,
+// then restore the placeholders to real ability-jump-link spans as the very last step.
+function protectGrantedAbilities(talentName, text) {
   const grants = TALENT_GRANTS[talentName];
   const grantedAbilities = [
     ...((grants && grants.abilities) || []),
     ...(TALENT_TIERED_ABILITIES[talentName] || [])
-  ];
-  if (grantedAbilities.length === 0) return text;
+  ].filter(name => ABILITY_NAME_SET.has(name));
+  if (grantedAbilities.length === 0) return { text, restore: (t) => t };
+  const sorted = [...grantedAbilities].sort((a, b) => b.length - a.length);
+  const placeholders = [];
   let result = text;
-  grantedAbilities.forEach(abilityName => {
-    if (!ABILITY_NAME_SET.has(abilityName)) return;
-    const escaped = abilityName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  sorted.forEach(abilityName => {
+    const escaped = escapeRegExp(abilityName);
     const re = new RegExp(`\\b${escaped}\\b`, "g");
     result = result.replace(re, (match) => {
       const safe = match.replace(/"/g, "&quot;");
-      return `<span class="ability-jump-link" data-ability-name="${safe}">${match}</span>`;
+      const token = `AB${placeholders.length}E`;
+      placeholders.push(`<span class="ability-jump-link" data-ability-name="${safe}">${match}</span>`);
+      return token;
     });
   });
-  return result;
+  return {
+    text: result,
+    restore: (t) => t.replace(/AB(\d+)E/g, (whole, idx) => placeholders[parseInt(idx, 10)] ?? whole)
+  };
 }
 
 // Talents that say "Gain 1 Cleric" or "Gain 1 Wizard and 1 Focus" have the granted
@@ -1422,14 +1610,15 @@ function processEffectMentions(text) {
   return text.replace(re, (whole, pre, parenInner, bareName, offset) => {
     if (parenInner !== undefined) {
       // A capitalized word at the very start of the description is almost always just
-      // normal sentence-initial capitalization (e.g. "Toggle Meditating (...)"), not
-      // part of the flavor name — only italicize the last word in that case, so "Toggle"
-      // stays plain and "Meditating" gets the effect-mention treatment.
+      // normal sentence-initial capitalization (e.g. "Toggle Meditating (...)", "Grant
+      // Earth Armor (...)"), not part of the flavor name — drop only that first (verb)
+      // word and italicize everything after it, since the real flavor name can itself
+      // be multiple words ("Earth Armor", not just "Armor").
       if (offset === 0) {
         const words = pre.split(/\s+/);
         if (words.length > 1) {
-          const last = words.pop();
-          return `${words.join(" ")} <em>${last}</em> (${effectLinkSpan(parenInner)})`;
+          const [first, ...rest] = words;
+          return `${first} <em>${rest.join(" ")}</em> (${effectLinkSpan(parenInner)})`;
         }
       }
       return `<em>${pre}</em> (${effectLinkSpan(parenInner)})`;
@@ -1616,12 +1805,14 @@ let talentRarityFilter = "All";
 let talentArchetypeFilter = "All";
 let effectCatFilter = "All";
 let abilityCatFilter = "All";
+let itemSlotFilter = "All";
 
 const talentCats = ["All", "Damage", "Tank", "Support", "General", "Innate"];
 const talentRarities = ["All", "Common", "Rare", "Legendary"];
 const talentArchetypes = ["All", "Bard", "Cleric", "Druid", "Duelist", "Elementalist", "Hunter", "Knight", "Martial Artist", "Rampager", "Sharp Eye", "Spellslinger", "Swashbuckler", "Thief", "Valkyrie", "Warlock", "Wizard"];
 const effectCats = ["All", "Damage Per Round", "Control", "Defense", "Bonus"];
 const abilityCats = ["All", "Attack", "Heal", "Effect", "Create", "Save"];
+const itemSlots = ["All", "Head", "Body", "Main Hand", "Off Hand", "Two Handed", "Accessory", "Consumable"];
 
 function buildChips(containerId, options, activeVal, onClick) {
   const el = document.getElementById(containerId);
@@ -1651,7 +1842,11 @@ function filteredAbilities() {
   return ABILITIES.filter(a => abilityCatFilter === "All" || a.category === abilityCatFilter);
 }
 
-let talentGrid, effectGrid, abilityGrid;
+function filteredItems() {
+  return allItems().filter(i => itemSlotFilter === "All" || i.slot === itemSlotFilter);
+}
+
+let talentGrid, effectGrid, abilityGrid, itemGrid;
 
 function renderTalentGrid() {
   const data = filteredTalents();
@@ -1661,8 +1856,12 @@ function renderTalentGrid() {
   const rows = data.map(t => [t.name, t.stacks, t.category, t.rarity, t.archetype, t.desc]);
   const columns = [
     {
+      // Fixed px rather than a % of the (now unconstrained) full-page table width —
+      // most talent names are one or two short words, so a percentage here leaves
+      // visible dead space; the handful of long ones ("Stance of the Crimson Mantis")
+      // just wrap onto a second line, which is fine for a table cell.
       name: "Name",
-      width: "16%",
+      width: "180px",
       formatter: (cell, row) => {
         const stacks = row.cells[1].data;
         return gridjs.html(cell + (stacks ? ` <span class="stack-note">(${stacks})</span>` : ""));
@@ -1688,11 +1887,12 @@ function renderTalentGrid() {
       name: "Description",
       formatter: (cell, row) => {
         const talentName = row.cells[0].data;
-        const withEffects = processEffectMentions(cell);
+        const { text: protectedText, restore } = protectGrantedAbilities(talentName, cell);
+        const withEffects = processEffectMentions(protectedText);
         const withGrantItalics = italicizeGrantedNames(talentName, withEffects);
         const withSkills = italicizeSkillMentions(talentName, withGrantItalics);
         const withSelfTerms = italicizeSelfTerms(talentName, withSkills);
-        const withAbilities = linkifyGrantedAbilities(talentName, withSelfTerms);
+        const withAbilities = restore(withSelfTerms);
         return gridjs.html(withAbilities);
       }
     }
@@ -1716,7 +1916,12 @@ function renderEffectGrid() {
   document.getElementById("effect-count").textContent = data.length + " effect" + (data.length === 1 ? "" : "s");
   const rows = data.map(e => [e.name, e.category, e.desc]);
   const columns = [
-    { name: "Name", width: "14%" },
+    // Effect names are always short single/double words (Agony, Bleed, Honey Badgered).
+    // A percentage width grows with the table's now-unconstrained full-page width and
+    // leaves visible dead space next to short names — a fixed px budget sized to the
+    // longest name ("Honey Badgered") stays right-sized no matter how wide the table
+    // gets, and Description (no width — flexible) absorbs 100% of what's left over.
+    { name: "Name", width: "150px" },
     {
       name: "Category",
       width: "170px",
@@ -1772,7 +1977,7 @@ function renderAbilityGrid() {
     { name: "Name", width: "150px" },
     {
       name: "Category",
-      width: "120px",
+      width: "150px",
       formatter: (cell) => gridjs.html(catBadge(cell))
     },
     {
@@ -1809,6 +2014,109 @@ function renderAbilityGrid() {
   }
 }
 
+// stat_bonus/skill_bonus are both "applies for as long as the item is equipped" bonuses —
+// merged into one column since the JSON split between them is an implementation detail
+// (which sheet field gets written to), not something a reader needs to track separately.
+function formatStatSkillBonus(dict) {
+  const entries = Object.entries(dict || {});
+  if (entries.length === 0) return "—";
+  return entries.map(([k, v]) => `${k.charAt(0).toUpperCase() + k.slice(1)} +${v}`).join(", ");
+}
+function formatWeakness(dict) {
+  const entries = Object.entries(dict || {});
+  if (entries.length === 0) return "—";
+  return entries.map(([k, v]) => `${k.charAt(0).toUpperCase() + k.slice(1)} ${v >= 0 ? "+" : ""}${v}`).join(", ");
+}
+// Granted abilities and granted talents are mechanically different (an ability shows up
+// in the Abilities tab with its own DC/cost/pool; a talent shows up in the Talents tab
+// with its own category/rarity/archetype) so they get separate columns rather than being
+// mashed into one "Grants" list. Only abilities currently have a working jump-link
+// mechanism (linkifyGrantedAbilities/jumpToAbility) — there's no talent-search-and-jump
+// helper yet, so granted talent names render as plain text for now.
+function itemGrantedAbilitiesHtml(item) {
+  const names = item.grantedAbilities || [];
+  if (names.length === 0) return "—";
+  return names.map(name => {
+    if (ABILITY_NAME_SET.has(name)) {
+      return `<span class="ability-jump-link" data-ability-name="${name}">${name}</span>`;
+    }
+    return name;
+  }).join(", ");
+}
+function itemGrantedTalentsHtml(item) {
+  const names = item.grantedTalents || [];
+  return names.length ? names.join(", ") : "—";
+}
+
+function findItemByName(name) {
+  return allItems().find(i => i.name === name);
+}
+
+function renderItemGrid() {
+  const data = filteredItems();
+  document.getElementById("item-count").textContent = data.length + " item" + (data.length === 1 ? "" : "s");
+  const rows = data.map(i => [
+    i.name,
+    i.slot,
+    i.durability,
+    i.extraBonus,
+    formatStatSkillBonus({ ...i.statBonus, ...i.skillBonus }),
+    formatWeakness(i.weakness),
+    itemGrantedTalentsHtml(i),
+    itemGrantedAbilitiesHtml(i),
+    !!i.isCustom
+  ]);
+  // Fixed px per column, sized to its own header/content, except the last (Granted
+  // Abilities) which is left flexible — same pattern as Description in the other three
+  // grids, so this table stretches to the same full page width they do.
+  const columns = [
+    {
+      name: "Name",
+      width: "160px",
+      // Defensive optional-chaining here: Grid.js's internal sort/search can momentarily
+      // hand the formatter a row whose cells array is shorter than the full column set
+      // (seen as an "Uncaught (in promise)" TypeError in production), so don't assume
+      // cells[8] exists.
+      formatter: (cell, row) => row.cells && row.cells[8] && row.cells[8].data
+        ? gridjs.html(`${cell} <span class="badge badge-common" title="Saved from the Item Builder — not in the real items.json">Custom</span>`)
+        : cell
+    },
+    {
+      name: "Slot",
+      width: "110px",
+      formatter: (cell) => gridjs.html(catBadge(cell))
+    },
+    { name: "Durability", width: "150px" },
+    {
+      name: "Pool Bonus",
+      width: "150px",
+      formatter: (cell) => cell ? `+${cell}` : "—"
+    },
+    { name: "Extra Bonus", width: "160px" },
+    { name: "Weakness", width: "140px" },
+    { name: "Granted Talents", width: "230px" },
+    {
+      // No width — this is the flexible column that absorbs whatever's left of the
+      // table's full page width, same as Description in the other three grids. That
+      // keeps this table's rendered width matching Talents/Effects/Abilities exactly.
+      name: "Granted Abilities",
+      formatter: (cell) => gridjs.html(cell)
+    }
+  ];
+  if (!itemGrid) {
+    itemGrid = new gridjs.Grid({
+      columns,
+      data: rows,
+      sort: true,
+      search: true,
+      pagination: { limit: 15 },
+      className: { table: "gridjs-table" }
+    }).render(document.getElementById("item-grid"));
+  } else {
+    itemGrid.updateConfig({ columns, data: rows }).forceRender();
+  }
+}
+
 function catClickHandler(v) {
   talentCatFilter = v;
   buildChips("talent-cat-chips", talentCats, talentCatFilter, catClickHandler);
@@ -1834,16 +2142,23 @@ function abilityCatClickHandler(v) {
   buildChips("ability-cat-chips", abilityCats, abilityCatFilter, abilityCatClickHandler);
   renderAbilityGrid();
 }
+function itemSlotClickHandler(v) {
+  itemSlotFilter = v;
+  buildChips("item-slot-chips", itemSlots, itemSlotFilter, itemSlotClickHandler);
+  renderItemGrid();
+}
 
 buildChips("talent-cat-chips", talentCats, talentCatFilter, catClickHandler);
 buildChips("talent-rarity-chips", talentRarities, talentRarityFilter, rarityClickHandler);
 buildChips("talent-archetype-chips", talentArchetypes, talentArchetypeFilter, archetypeClickHandler);
 buildChips("effect-cat-chips", effectCats, effectCatFilter, effectCatClickHandler);
 buildChips("ability-cat-chips", abilityCats, abilityCatFilter, abilityCatClickHandler);
+buildChips("item-slot-chips", itemSlots, itemSlotFilter, itemSlotClickHandler);
 
 renderTalentGrid();
 renderEffectGrid();
 renderAbilityGrid();
+renderItemGrid();
 
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -1971,6 +2286,15 @@ let extraBonusRows = [];
 let weaknessRows = [];
 let talentRows = [];
 let abilityRows = [];
+let itemRows = [];
+
+// Item Builder's own form-row state (separate from the Character Builder's rows above —
+// these describe the item being authored, not a character).
+let ibStatRows = [];
+let ibSkillRows = [];
+let ibWeaknessRows = [];
+let ibAbilityRows = [];
+let ibTalentRows = [];
 
 function escapeAttr(s) {
   return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -2078,11 +2402,61 @@ function addAbility(name) {
   renderAbilities();
 }
 
+function renderItemRows() {
+  const c = document.getElementById("cb-item-list");
+  if (itemRows.length === 0) {
+    c.innerHTML = `<div class="sim-placeholder">No items equipped yet.</div>`;
+    return;
+  }
+  c.innerHTML = "";
+  itemRows.forEach(row => {
+    const chip = document.createElement("div");
+    chip.className = "cb-talent-chip";
+    chip.innerHTML = `<span>${row.name}${row.qty > 1 ? ` ×${row.qty}` : ""}</span><button class="cb-chip-remove" title="Remove (won't undo bonuses already granted)">×</button>`;
+    chip.querySelector(".cb-chip-remove").addEventListener("click", () => {
+      itemRows = itemRows.filter(r => r.id !== row.id);
+      renderItemRows();
+    });
+    c.appendChild(chip);
+  });
+}
+
+// Equipping an item applies its passive stat/skill bonuses, weakness, and any granted
+// abilities/talents exactly once — mirrors addTalent's grant-application pattern. Adding
+// a second copy of an already-equipped item just bumps the quantity shown on its chip;
+// it does not re-apply bonuses a second time (matches the "removing doesn't undo grants"
+// simplification already used for talents/abilities in this builder).
+function addItem(name) {
+  const item = findItemByName(name);
+  if (!item) return;
+  const existing = itemRows.find(r => r.name === name);
+  if (existing) {
+    existing.qty += 1;
+    renderItemRows();
+    return;
+  }
+  itemRows.push({ id: nextRowId++, name, qty: 1 });
+  if (item.statBonus) Object.entries(item.statBonus).forEach(([k, v]) => grantStatBonus(k, v));
+  if (item.skillBonus) Object.entries(item.skillBonus).forEach(([k, v]) => grantSkillBonus(k, v));
+  if (item.weakness) Object.entries(item.weakness).forEach(([k, v]) => grantWeakness(k, v));
+  if (item.grantedAbilities) item.grantedAbilities.forEach(a => abilityRows.push({ id: nextRowId++, name: a }));
+  if (item.grantedTalents) item.grantedTalents.forEach(t => addTalent(t));
+  renderAbilities();
+  renderItemRows();
+}
+
 function grantExtraBonus(name, amount) {
   const existing = extraBonusRows.find(r => r.name === name);
   if (existing) existing.value += amount;
   else extraBonusRows.push({ id: nextRowId++, name, value: amount });
   renderExtraBonuses();
+}
+
+function grantWeakness(name, amount) {
+  const existing = weaknessRows.find(r => r.name === name);
+  if (existing) existing.value += amount;
+  else weaknessRows.push({ id: nextRowId++, name, value: amount });
+  renderWeaknesses();
 }
 
 function grantSkillBonus(skillKey, amount) {
@@ -2262,6 +2636,362 @@ cbAbilitySearch.addEventListener("input", () => {
   });
 });
 
+function showItemTooltip(item, anchorEl) {
+  const bonusBits = [];
+  if (item.extraBonus) bonusBits.push(`Pool +${item.extraBonus}`);
+  const passive = formatStatSkillBonus({ ...item.statBonus, ...item.skillBonus });
+  if (passive !== "—") bonusBits.push(passive);
+  const weak = formatWeakness(item.weakness);
+  if (weak !== "—") bonusBits.push(`Weakness: ${weak}`);
+  cbTooltip.innerHTML = `
+    <div class="cb-tooltip-name">${item.name} ${catBadge(item.slot)}</div>
+    ${bonusBits.length ? `<div class="cb-tooltip-desc">${bonusBits.join(" · ")}</div>` : ""}
+  `;
+  positionCbTooltip(anchorEl);
+}
+
+const cbItemSearch = document.getElementById("cb-item-search");
+const cbItemSuggestions = document.getElementById("cb-item-suggestions");
+
+cbItemSearch.addEventListener("input", () => {
+  const q = cbItemSearch.value.trim().toLowerCase();
+  cbItemSuggestions.innerHTML = "";
+  hideTalentTooltip();
+  if (!q) { cbItemSuggestions.classList.remove("open"); return; }
+  const matches = allItems().filter(i => i.name.toLowerCase().includes(q)).slice(0, 8);
+  if (matches.length === 0) { cbItemSuggestions.classList.remove("open"); return; }
+  cbItemSuggestions.classList.add("open");
+  matches.forEach(i => {
+    const row = document.createElement("div");
+    row.className = "cb-suggestion-row";
+    row.innerHTML = `<span class="cb-suggestion-name">${i.name}</span>${catBadge(i.slot)}`;
+    row.addEventListener("mouseenter", () => showItemTooltip(i, row));
+    row.addEventListener("mouseleave", hideTalentTooltip);
+    row.addEventListener("click", () => {
+      addItem(i.name);
+      cbItemSearch.value = "";
+      cbItemSuggestions.innerHTML = "";
+      cbItemSuggestions.classList.remove("open");
+      hideTalentTooltip();
+    });
+    cbItemSuggestions.appendChild(row);
+  });
+});
+
+// ---- Item Builder ----
+// Builds an item in the exact shape items.json stores (see the durability/stat_bonus/
+// skill_bonus/extra_bonus/weakness/granted_abilities/granted_talents fields read in the
+// Glossary's Items tab above). Its own Granted Abilities/Granted Talents pickers reuse the
+// same search-and-chip pattern as the Character Builder's talent/ability search.
+
+function renderIbStatRows() {
+  const c = document.getElementById("ib-stat-rows");
+  if (ibStatRows.length === 0) { c.innerHTML = `<div class="sim-placeholder">No stat bonuses yet.</div>`; return; }
+  c.innerHTML = "";
+  ibStatRows.forEach(row => {
+    const div = document.createElement("div");
+    div.className = "cb-row";
+    div.innerHTML = `
+      <input type="text" class="cb-input cb-input-name" value="${escapeAttr(row.name)}" placeholder="e.g. physical">
+      <input type="number" class="cb-input cb-input-num" value="${row.value}">
+      <button class="cb-row-remove" title="Remove">×</button>
+    `;
+    div.querySelector(".cb-input-name").addEventListener("input", e => { row.name = e.target.value; });
+    div.querySelector(".cb-input-num").addEventListener("input", e => { row.value = parseInt(e.target.value) || 0; });
+    div.querySelector(".cb-row-remove").addEventListener("click", () => {
+      ibStatRows = ibStatRows.filter(r => r.id !== row.id);
+      renderIbStatRows();
+    });
+    c.appendChild(div);
+  });
+}
+
+function renderIbSkillRows() {
+  const c = document.getElementById("ib-skill-rows");
+  if (ibSkillRows.length === 0) { c.innerHTML = `<div class="sim-placeholder">No skill bonuses yet.</div>`; return; }
+  c.innerHTML = "";
+  ibSkillRows.forEach(row => {
+    const div = document.createElement("div");
+    div.className = "cb-row";
+    div.innerHTML = `
+      <input type="text" class="cb-input cb-input-name" value="${escapeAttr(row.name)}" placeholder="e.g. fight">
+      <input type="number" class="cb-input cb-input-num" value="${row.value}">
+      <button class="cb-row-remove" title="Remove">×</button>
+    `;
+    div.querySelector(".cb-input-name").addEventListener("input", e => { row.name = e.target.value; });
+    div.querySelector(".cb-input-num").addEventListener("input", e => { row.value = parseInt(e.target.value) || 0; });
+    div.querySelector(".cb-row-remove").addEventListener("click", () => {
+      ibSkillRows = ibSkillRows.filter(r => r.id !== row.id);
+      renderIbSkillRows();
+    });
+    c.appendChild(div);
+  });
+}
+
+function renderIbWeaknessRows() {
+  const c = document.getElementById("ib-weakness-rows");
+  if (ibWeaknessRows.length === 0) { c.innerHTML = `<div class="sim-placeholder">No weaknesses yet.</div>`; return; }
+  c.innerHTML = "";
+  ibWeaknessRows.forEach(row => {
+    const div = document.createElement("div");
+    div.className = "cb-row";
+    div.innerHTML = `
+      <input type="text" class="cb-input cb-input-name" value="${escapeAttr(row.name)}" placeholder="Name">
+      <input type="number" class="cb-input cb-input-num" value="${row.value}">
+      <button class="cb-row-remove" title="Remove">×</button>
+    `;
+    div.querySelector(".cb-input-name").addEventListener("input", e => { row.name = e.target.value; });
+    div.querySelector(".cb-input-num").addEventListener("input", e => { row.value = parseInt(e.target.value) || 0; });
+    div.querySelector(".cb-row-remove").addEventListener("click", () => {
+      ibWeaknessRows = ibWeaknessRows.filter(r => r.id !== row.id);
+      renderIbWeaknessRows();
+    });
+    c.appendChild(div);
+  });
+}
+
+function renderIbAbilities() {
+  const c = document.getElementById("ib-ability-list");
+  if (ibAbilityRows.length === 0) { c.innerHTML = `<div class="sim-placeholder">No granted abilities yet.</div>`; return; }
+  c.innerHTML = "";
+  ibAbilityRows.forEach(row => {
+    const chip = document.createElement("div");
+    chip.className = "cb-talent-chip";
+    chip.innerHTML = `<span>${row.name}</span><button class="cb-chip-remove" title="Remove">×</button>`;
+    chip.querySelector(".cb-chip-remove").addEventListener("click", () => {
+      ibAbilityRows = ibAbilityRows.filter(r => r.id !== row.id);
+      renderIbAbilities();
+    });
+    c.appendChild(chip);
+  });
+}
+
+function renderIbTalents() {
+  const c = document.getElementById("ib-talent-list");
+  if (ibTalentRows.length === 0) { c.innerHTML = `<div class="sim-placeholder">No granted talents yet.</div>`; return; }
+  c.innerHTML = "";
+  ibTalentRows.forEach(row => {
+    const chip = document.createElement("div");
+    chip.className = "cb-talent-chip";
+    chip.innerHTML = `<span>${row.name}</span><button class="cb-chip-remove" title="Remove">×</button>`;
+    chip.querySelector(".cb-chip-remove").addEventListener("click", () => {
+      ibTalentRows = ibTalentRows.filter(r => r.id !== row.id);
+      renderIbTalents();
+    });
+    c.appendChild(chip);
+  });
+}
+
+function addIbAbility(name) {
+  if (ibAbilityRows.some(r => r.name === name)) return;
+  ibAbilityRows.push({ id: nextRowId++, name });
+  renderIbAbilities();
+}
+
+function addIbTalent(name) {
+  if (ibTalentRows.some(r => r.name === name)) return;
+  ibTalentRows.push({ id: nextRowId++, name });
+  renderIbTalents();
+}
+
+document.getElementById("ib-add-stat").addEventListener("click", () => {
+  ibStatRows.push({ id: nextRowId++, name: "", value: 1 });
+  renderIbStatRows();
+});
+document.getElementById("ib-add-skill").addEventListener("click", () => {
+  ibSkillRows.push({ id: nextRowId++, name: "", value: 1 });
+  renderIbSkillRows();
+});
+document.getElementById("ib-add-weakness").addEventListener("click", () => {
+  ibWeaknessRows.push({ id: nextRowId++, name: "", value: -1 });
+  renderIbWeaknessRows();
+});
+
+const ibAbilitySearch = document.getElementById("ib-ability-search");
+const ibAbilitySuggestions = document.getElementById("ib-ability-suggestions");
+ibAbilitySearch.addEventListener("input", () => {
+  const q = ibAbilitySearch.value.trim().toLowerCase();
+  ibAbilitySuggestions.innerHTML = "";
+  hideTalentTooltip();
+  if (!q) { ibAbilitySuggestions.classList.remove("open"); return; }
+  const matches = ABILITIES.filter(a => a.name.toLowerCase().includes(q)).slice(0, 8);
+  if (matches.length === 0) { ibAbilitySuggestions.classList.remove("open"); return; }
+  ibAbilitySuggestions.classList.add("open");
+  matches.forEach(a => {
+    const row = document.createElement("div");
+    row.className = "cb-suggestion-row";
+    row.innerHTML = `<span class="cb-suggestion-name">${a.name}</span>${catBadge(a.category)}`;
+    row.addEventListener("mouseenter", () => showAbilityTooltip(a, row));
+    row.addEventListener("mouseleave", hideTalentTooltip);
+    row.addEventListener("click", () => {
+      addIbAbility(a.name);
+      ibAbilitySearch.value = "";
+      ibAbilitySuggestions.innerHTML = "";
+      ibAbilitySuggestions.classList.remove("open");
+      hideTalentTooltip();
+    });
+    ibAbilitySuggestions.appendChild(row);
+  });
+});
+
+const ibTalentSearch = document.getElementById("ib-talent-search");
+const ibTalentSuggestions = document.getElementById("ib-talent-suggestions");
+ibTalentSearch.addEventListener("input", () => {
+  const q = ibTalentSearch.value.trim().toLowerCase();
+  ibTalentSuggestions.innerHTML = "";
+  hideTalentTooltip();
+  if (!q) { ibTalentSuggestions.classList.remove("open"); return; }
+  const matches = TALENTS.filter(t => t.name.toLowerCase().includes(q)).slice(0, 8);
+  if (matches.length === 0) { ibTalentSuggestions.classList.remove("open"); return; }
+  ibTalentSuggestions.classList.add("open");
+  matches.forEach(t => {
+    const row = document.createElement("div");
+    row.className = "cb-suggestion-row";
+    row.innerHTML = `<span class="cb-suggestion-name">${t.name}</span>${catBadge(t.category)}${rarityBadge(t.rarity)}`;
+    row.addEventListener("mouseenter", () => showTalentTooltip(t, row));
+    row.addEventListener("mouseleave", hideTalentTooltip);
+    row.addEventListener("click", () => {
+      addIbTalent(t.name);
+      ibTalentSearch.value = "";
+      ibTalentSuggestions.innerHTML = "";
+      ibTalentSuggestions.classList.remove("open");
+      hideTalentTooltip();
+    });
+    ibTalentSuggestions.appendChild(row);
+  });
+});
+
+function renderCustomItemsList() {
+  const c = document.getElementById("ib-custom-item-list");
+  if (CUSTOM_ITEMS.length === 0) {
+    c.innerHTML = `<div class="sim-placeholder">None saved yet.</div>`;
+    return;
+  }
+  c.innerHTML = "";
+  CUSTOM_ITEMS.forEach(item => {
+    const chip = document.createElement("div");
+    chip.className = "cb-talent-chip";
+    chip.innerHTML = `<span>${item.name} ${catBadge(item.slot)}</span><button class="cb-chip-remove" title="Delete this custom item">×</button>`;
+    chip.querySelector(".cb-chip-remove").addEventListener("click", () => {
+      if (!confirm(`Delete "${item.name}"? This can't be undone.`)) return;
+      CUSTOM_ITEMS = CUSTOM_ITEMS.filter(i => i.name !== item.name);
+      saveCustomItems();
+      renderCustomItemsList();
+      renderItemGrid();
+    });
+    c.appendChild(chip);
+  });
+}
+
+// Reads the Item Builder's form fields + row lists into one plain object shared by both
+// the "Export Item JSON" and "Save as Custom Item" buttons. Stat/skill bonus keys are
+// lowercased since those must match SKILL_KEYS/STAT_KEYS exactly for the mechanic to
+// apply; weakness names are left as free text, same as the Character Builder's own
+// Weaknesses field (vices/fears/allergies-style labels, not a restricted key set).
+function readItemBuilderForm() {
+  const name = document.getElementById("ib-name").value.trim();
+  const slot = document.getElementById("ib-slot").value;
+  const durability = parseInt(document.getElementById("ib-durability").value) || 0;
+  const extraBonus = parseInt(document.getElementById("ib-pool-bonus").value) || 0;
+  const statBonus = {};
+  ibStatRows.forEach(r => { const n = r.name.trim().toLowerCase(); if (n) statBonus[n] = (statBonus[n] || 0) + (r.value || 0); });
+  const skillBonus = {};
+  ibSkillRows.forEach(r => { const n = r.name.trim().toLowerCase(); if (n) skillBonus[n] = (skillBonus[n] || 0) + (r.value || 0); });
+  const weakness = {};
+  ibWeaknessRows.forEach(r => { const n = r.name.trim(); if (n) weakness[n] = (weakness[n] || 0) + (r.value || 0); });
+  const grantedAbilities = ibAbilityRows.map(r => r.name);
+  const grantedTalents = ibTalentRows.map(r => r.name);
+  return { name, slot, durability, extraBonus, statBonus, skillBonus, weakness, grantedAbilities, grantedTalents };
+}
+
+document.getElementById("ib-export-btn").addEventListener("click", () => {
+  const f = readItemBuilderForm();
+  if (!f.name) { alert("Give the item a name first."); return; }
+  const slotKey = f.slot.toLowerCase().replace(/\s+/g, "_");
+  const itemDef = {
+    durability: f.durability,
+    stat_bonus: f.statBonus,
+    skill_bonus: f.skillBonus,
+    extra_bonus: f.extraBonus,
+    weakness: f.weakness,
+    granted_abilities: f.grantedAbilities,
+    granted_talents: f.grantedTalents
+  };
+  const json = JSON.stringify({ [slotKey]: { [f.name]: itemDef } }, null, 2);
+  document.getElementById("ib-export-textarea").value = json;
+  const outputBox = document.getElementById("ib-export-output");
+  outputBox.style.display = "block";
+  outputBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+
+document.getElementById("ib-copy-btn").addEventListener("click", () => {
+  const textarea = document.getElementById("ib-export-textarea");
+  textarea.select();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(textarea.value).catch(() => {});
+  }
+  const btn = document.getElementById("ib-copy-btn");
+  const orig = btn.textContent;
+  btn.textContent = "Copied!";
+  setTimeout(() => { btn.textContent = orig; }, 1200);
+});
+
+document.getElementById("ib-save-btn").addEventListener("click", () => {
+  const f = readItemBuilderForm();
+  const msg = document.getElementById("ib-save-message");
+  if (!f.name) { msg.textContent = "Give the item a name first."; return; }
+  if (ITEMS.some(i => i.name === f.name)) {
+    msg.textContent = `"${f.name}" is already a real item in the catalog — pick a different name.`;
+    return;
+  }
+  const newItem = {
+    name: f.name, slot: f.slot, durability: f.durability, extraBonus: f.extraBonus,
+    statBonus: f.statBonus, skillBonus: f.skillBonus, weakness: f.weakness,
+    grantedAbilities: f.grantedAbilities, grantedTalents: f.grantedTalents, isCustom: true
+  };
+  const existingIdx = CUSTOM_ITEMS.findIndex(i => i.name === f.name);
+  if (existingIdx >= 0) CUSTOM_ITEMS[existingIdx] = newItem;
+  else CUSTOM_ITEMS.push(newItem);
+  saveCustomItems();
+  renderCustomItemsList();
+  renderItemGrid();
+  msg.textContent = `Saved "${f.name}" — it now shows up in the Glossary's Items tab and in Equipment search above.`;
+  setTimeout(() => { msg.textContent = ""; }, 5000);
+});
+
+// Converts a CUSTOM_ITEMS entry (the Glossary/ITEMS-shaped object) back into the raw
+// items.json shape, same field mapping readItemBuilderForm/ib-export-btn uses for a
+// single in-progress item.
+function customItemToRawDef(item) {
+  return {
+    durability: item.durability,
+    stat_bonus: item.statBonus || {},
+    skill_bonus: item.skillBonus || {},
+    extra_bonus: item.extraBonus || 0,
+    weakness: item.weakness || {},
+    granted_abilities: item.grantedAbilities || [],
+    granted_talents: item.grantedTalents || []
+  };
+}
+
+document.getElementById("ib-export-all-btn").addEventListener("click", () => {
+  if (CUSTOM_ITEMS.length === 0) {
+    alert("No custom items saved yet — save one first.");
+    return;
+  }
+  const out = {};
+  CUSTOM_ITEMS.forEach(item => {
+    const slotKey = item.slot.toLowerCase().replace(/\s+/g, "_");
+    if (!out[slotKey]) out[slotKey] = {};
+    out[slotKey][item.name] = customItemToRawDef(item);
+  });
+  const json = JSON.stringify(out, null, 2);
+  document.getElementById("ib-export-textarea").value = json;
+  const outputBox = document.getElementById("ib-export-output");
+  outputBox.style.display = "block";
+  outputBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+
 document.addEventListener("click", e => {
   if (!cbTalentSuggestions.contains(e.target) && e.target !== cbTalentSearch) {
     cbTalentSuggestions.classList.remove("open");
@@ -2269,6 +2999,18 @@ document.addEventListener("click", e => {
   }
   if (!cbAbilitySuggestions.contains(e.target) && e.target !== cbAbilitySearch) {
     cbAbilitySuggestions.classList.remove("open");
+    hideTalentTooltip();
+  }
+  if (!cbItemSuggestions.contains(e.target) && e.target !== cbItemSearch) {
+    cbItemSuggestions.classList.remove("open");
+    hideTalentTooltip();
+  }
+  if (!ibAbilitySuggestions.contains(e.target) && e.target !== ibAbilitySearch) {
+    ibAbilitySuggestions.classList.remove("open");
+    hideTalentTooltip();
+  }
+  if (!ibTalentSuggestions.contains(e.target) && e.target !== ibTalentSearch) {
+    ibTalentSuggestions.classList.remove("open");
     hideTalentTooltip();
   }
 });
@@ -2302,6 +3044,16 @@ document.getElementById("cb-export-btn").addEventListener("click", () => {
   const hpMax = parseInt(document.getElementById("cb-hp-max").value) || 0;
   const mpMax = parseInt(document.getElementById("cb-mp-max").value) || 0;
 
+  // item_bonuses.equipped and item_durability are flat name→qty / name→durability dicts
+  // (no slot nesting) — matches the real shape aliases/bag.py reads and writes.
+  const equipped = {};
+  itemRows.forEach(r => { equipped[r.name] = r.qty; });
+  const itemDurability = {};
+  itemRows.forEach(r => {
+    const item = findItemByName(r.name);
+    itemDurability[r.name] = item ? item.durability : 100;
+  });
+
   const sheet = {
     level,
     hitpoints: { current: hpMax, max: hpMax },
@@ -2310,7 +3062,8 @@ document.getElementById("cb-export-btn").addEventListener("click", () => {
     background_bonuses: bg,
     stat_bonuses: stats,
     skill_bonuses: skills,
-    item_bonuses: {},
+    item_bonuses: { equipped, inventory: {} },
+    item_durability: itemDurability,
     extra_bonuses: extra,
     status_effects: {},
     weaknesses: weak,
@@ -2342,6 +3095,13 @@ renderExtraBonuses();
 renderWeaknesses();
 renderTalentRows();
 renderAbilities();
+renderItemRows();
+renderIbStatRows();
+renderIbSkillRows();
+renderIbWeaknessRows();
+renderIbAbilities();
+renderIbTalents();
+renderCustomItemsList();
 </script>
 
 </body>
